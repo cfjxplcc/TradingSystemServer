@@ -1,0 +1,7 @@
+﻿<!-- 新的 Lazada open.lazada.com 开发SDK -->
+<!-- 版本1.2.0 -->
+mvn install:install-file -Dfile=C:\Users\cfjxp\IdeaProjects\TradingSystemServer_v1.0.0\lib\lazop-api-sdk-1.2.0.jar -DgroupId=com.lazada.lazop -DartifactId=lazop-api-sdk -Dversion=1.2.0 -Dpackaging=jar
+mvn install:install-file -Dfile=C:\Users\cfjxp\IdeaProjects\TradingSystemServer_v1.0.0\lib\lazop-api-sdk-1.2.0-sources.jar -DgroupId=com.lazada.lazop -DartifactId=lazop-api-sdk -Dversion=1.2.0 -Dpackaging=jar -Dclassifier=sources
+
+
+
