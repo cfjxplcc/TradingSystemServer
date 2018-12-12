@@ -68,7 +68,6 @@ public class EncryptUtils {
             }
             return new String(buf);
         } catch (Exception e) {
-            // TODO: handle exception
             return null;
         }
     }
