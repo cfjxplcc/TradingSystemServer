@@ -38,6 +38,7 @@ public class GetOrderDetailsResponse extends ShopeeBaseResponse {
         private long days_to_ship;
         private RecipientAddress recipient_address;
         private float estimated_shipping_fee;
+        private float actual_shipping_cost;
         private float total_amount;
         private float escrow_amount;
         private String order_status;
@@ -115,6 +116,14 @@ public class GetOrderDetailsResponse extends ShopeeBaseResponse {
 
         public void setEstimated_shipping_fee(float estimated_shipping_fee) {
             this.estimated_shipping_fee = estimated_shipping_fee;
+        }
+
+        public float getActual_shipping_cost() {
+            return actual_shipping_cost;
+        }
+
+        public void setActual_shipping_cost(float actual_shipping_cost) {
+            this.actual_shipping_cost = actual_shipping_cost;
         }
 
         public float getTotal_amount() {
@@ -307,22 +316,22 @@ public class GetOrderDetailsResponse extends ShopeeBaseResponse {
     }
 
     public static class Item {
-        private String item_id;
+        private long item_id;
         private String item_name;
         private String item_sku;
         private long variation_id;
         private String variation_name;
         private String variation_sku;
-        private long variation_quantity_purchased;
+        private int variation_quantity_purchased;
         private float variation_original_price;
         private float variation_discounted_price;
         private boolean is_wholesale;
 
-        public String getItem_id() {
+        public long getItem_id() {
             return item_id;
         }
 
-        public void setItem_id(String item_id) {
+        public void setItem_id(long item_id) {
             this.item_id = item_id;
         }
 
@@ -366,11 +375,11 @@ public class GetOrderDetailsResponse extends ShopeeBaseResponse {
             this.variation_sku = variation_sku;
         }
 
-        public long getVariation_quantity_purchased() {
+        public int getVariation_quantity_purchased() {
             return variation_quantity_purchased;
         }
 
-        public void setVariation_quantity_purchased(long variation_quantity_purchased) {
+        public void setVariation_quantity_purchased(int variation_quantity_purchased) {
             this.variation_quantity_purchased = variation_quantity_purchased;
         }
 

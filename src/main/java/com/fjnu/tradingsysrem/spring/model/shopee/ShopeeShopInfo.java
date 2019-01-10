@@ -1,5 +1,7 @@
 package com.fjnu.tradingsysrem.spring.model.shopee;
 
+import com.fjnu.tradingsysrem.shopee.response.shop.GetShopInfoResponse;
+
 import javax.persistence.*;
 
 /**
@@ -22,8 +24,15 @@ public class ShopeeShopInfo {
     @Column(name = "AUTHORIZATION_FLAG")
     private boolean authorizationFlag;
 
-    @Column(name = "SHOP_DESCRIPTION", length = 300)
-    private String shopDescription;
+    public ShopeeShopInfo() {
+    }
+
+    public ShopeeShopInfo(GetShopInfoResponse response) {
+        shopId = response.getShop_id();
+        shopName = response.getShop_name();
+        countryCode = response.getCountry();
+        authorizationFlag = true;
+    }
 
     public int getShopId() {
         return shopId;
@@ -55,13 +64,5 @@ public class ShopeeShopInfo {
 
     public void setAuthorizationFlag(boolean authorizationFlag) {
         this.authorizationFlag = authorizationFlag;
-    }
-
-    public String getShopDescription() {
-        return shopDescription;
-    }
-
-    public void setShopDescription(String shopDescription) {
-        this.shopDescription = shopDescription;
     }
 }

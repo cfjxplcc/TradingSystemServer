@@ -31,7 +31,7 @@ public class GetOrdersResponse extends ShopeeBaseResponse {
     public static class Order {
         private String ordersn;
         private String order_status;
-        private int update_time;
+        private long update_time;
 
         public String getOrdersn() {
             return ordersn;
@@ -49,11 +49,11 @@ public class GetOrdersResponse extends ShopeeBaseResponse {
             this.order_status = order_status;
         }
 
-        public int getUpdate_time() {
+        public long getUpdate_time() {
             return update_time;
         }
 
-        public void setUpdate_time(int update_time) {
+        public void setUpdate_time(long update_time) {
             this.update_time = update_time;
         }
     }

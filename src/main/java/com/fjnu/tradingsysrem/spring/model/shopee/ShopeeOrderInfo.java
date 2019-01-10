@@ -2,6 +2,7 @@ package com.fjnu.tradingsysrem.spring.model.shopee;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fjnu.tradingsysrem.shopee.response.orders.GetOrderDetailsResponse;
 import com.fjnu.tradingsysrem.spring.model.ExchangeRate;
 
 import javax.persistence.*;
@@ -18,7 +19,7 @@ public class ShopeeOrderInfo {
 
     @Id
     @Column(name = "ORDER_SN", length = 20)
-    private String ordrSn;
+    private String orderSn;
 
     @ManyToOne
     @JoinColumn(name = "SHOP_ID", nullable = false)
@@ -88,8 +89,7 @@ public class ShopeeOrderInfo {
     private String note;
 
     @Column(name = "NOTE_UPDATE_TIME")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private java.sql.Timestamp noteUpdateTime;
+    private String noteUpdateTime;
 
     @Column(name = "CREATE_TIME")
     private java.sql.Timestamp createTime;
@@ -112,12 +112,48 @@ public class ShopeeOrderInfo {
     @Column(name = "REMARKS")
     private String remarks;
 
-    public String getOrdrSn() {
-        return ordrSn;
+    public ShopeeOrderInfo() {
     }
 
-    public void setOrdrSn(String ordrSn) {
-        this.ordrSn = ordrSn;
+    public ShopeeOrderInfo(ShopeeShopInfo shopeeShopInfo, ExchangeRate exchangeRate, GetOrderDetailsResponse.Orders orders) {
+        orderSn = orders.getOrdersn();
+        this.shopeeShopInfo = shopeeShopInfo;
+        this.exchangeRate = exchangeRate;
+        cashOnDelivery = orders.isCod();
+        trackingNo = orders.getTracking_no();
+        dateToShip = new Timestamp(orders.getDays_to_ship() * 1000);
+        GetOrderDetailsResponse.RecipientAddress recipientAddress = orders.getRecipient_address();
+        recipientName = recipientAddress.getName();
+        recipientPhone = recipientAddress.getPhone();
+        recipientCountry = recipientAddress.getCountry();
+        recipientZipCode = recipientAddress.getZipcode();
+        recipientFullAddress = recipientAddress.getFull_address();
+        estimatedShippingFee = orders.getEstimated_shipping_fee();
+        actualShippingCost = orders.getActual_shipping_cost();
+        totalAmount = orders.getTotal_amount();
+        escrowAmount = orders.getEscrow_amount();
+        orderStatus = orders.getOrder_status();
+        shippingCarrier = orders.getShipping_carrier();
+        paymentMethod = orders.getPayment_method();
+        messageToSeller = orders.getMessage_to_seller();
+        note = orders.getNote();
+        noteUpdateTime = orders.getNote_update_time();
+        createTime = new Timestamp(orders.getCreate_time() * 1000);
+        if (orders.getUpdate_time() > 0) {
+            updateTime = new Timestamp(orders.getUpdate_time() * 1000);
+        }
+        if (orders.getPay_time() > 0) {
+            payTime = new Timestamp(orders.getPay_time() * 1000);
+        }
+        isDelivery = false;
+    }
+
+    public String getOrderSn() {
+        return orderSn;
+    }
+
+    public void setOrderSn(String ordrSn) {
+        this.orderSn = ordrSn;
     }
 
     public ShopeeShopInfo getShopeeShopInfo() {
@@ -290,11 +326,11 @@ public class ShopeeOrderInfo {
         this.note = note;
     }
 
-    public Timestamp getNoteUpdateTime() {
+    public String getNoteUpdateTime() {
         return noteUpdateTime;
     }
 
-    public void setNoteUpdateTime(Timestamp noteUpdateTime) {
+    public void setNoteUpdateTime(String noteUpdateTime) {
         this.noteUpdateTime = noteUpdateTime;
     }
 

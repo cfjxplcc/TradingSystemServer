@@ -1,5 +1,6 @@
 package com.fjnu.tradingsysrem.spring.model.shopee;
 
+import com.fjnu.tradingsysrem.shopee.response.orders.GetOrderDetailsResponse;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -50,6 +51,23 @@ public class ShopeeOrderItemsInfo {
 
     @Column(name = "IS_WHOLESALE")
     private boolean isWholesale;
+
+    public ShopeeOrderItemsInfo() {
+    }
+
+    public ShopeeOrderItemsInfo(ShopeeOrderInfo shopeeOrderInfo, GetOrderDetailsResponse.Item item) {
+        this.shopeeOrderInfo = shopeeOrderInfo;
+        itemId = item.getItem_id();
+        itemName = item.getItem_name();
+        itemSku = item.getItem_sku();
+        variationId = item.getVariation_id();
+        variationName = item.getVariation_name();
+        variationSku = item.getVariation_sku();
+        variationQuantityPurchased = item.getVariation_quantity_purchased();
+        variationOriginalPrice = item.getVariation_original_price();
+        variationDiscountedPrice = item.getVariation_discounted_price();
+        isWholesale = item.isIs_wholesale();
+    }
 
     public String getId() {
         return id;

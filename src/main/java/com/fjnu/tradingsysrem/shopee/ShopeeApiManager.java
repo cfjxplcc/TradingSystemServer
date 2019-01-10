@@ -9,11 +9,13 @@ import com.fjnu.tradingsysrem.shopee.request.body.logistics.LogisticsInitRequest
 import com.fjnu.tradingsysrem.shopee.request.body.orders.GetOrderDetailsRequestBody;
 import com.fjnu.tradingsysrem.shopee.request.body.orders.GetOrderListByCreateTimeRequestBody;
 import com.fjnu.tradingsysrem.shopee.request.body.shop.GetShopInfoRequestBody;
+import com.fjnu.tradingsysrem.shopee.request.body.shop.GetShopsByPartnerRequestBody;
 import com.fjnu.tradingsysrem.shopee.response.logistics.GetLogisticInfoResponse;
 import com.fjnu.tradingsysrem.shopee.response.logistics.LogisticsInitResponse;
 import com.fjnu.tradingsysrem.shopee.response.orders.GetOrderDetailsResponse;
 import com.fjnu.tradingsysrem.shopee.response.orders.GetOrdersResponse;
 import com.fjnu.tradingsysrem.shopee.response.shop.GetShopInfoResponse;
+import com.fjnu.tradingsysrem.shopee.response.shop.GetShopsByPartnerResponse;
 import com.fjnu.tradingsysrem.spring.utils.EncryptUtils;
 import com.google.gson.Gson;
 import org.springframework.lang.Nullable;
@@ -91,7 +93,7 @@ public class ShopeeApiManager {
     public String getShopCancelAuthorizeUrl() {
         String token = EncryptUtils.stringToSHA256(key + appCancelAuthorizationCallbackUrl);
         return serverBaseUrl + "shop/cancel_auth_partner?id=" + partnerId + "&redirect="
-                + appAuthorizationCallbackUrl + "&token=" + token;
+                + appCancelAuthorizationCallbackUrl + "&token=" + token;
     }
 
     /**
@@ -124,20 +126,25 @@ public class ShopeeApiManager {
     /**
      * 根据订单创建时间获取订单数据,时间最长15天
      *
-     * @param shopId 店铺id
-     * @param from   开始时间,单位秒
-     * @param to     结束时间,单位秒
+     * @param shopId    店铺id
+     * @param from      开始时间,单位:milliseconds
+     * @param to        结束时间,单位:milliseconds
+     * @param pageIndex 页数,default=0
      * @return
      * @throws IOException
      */
-    public Response<GetOrdersResponse> getOrderListByCreateTime(int shopId, long from, long to) throws IOException {
+    public Response<GetOrdersResponse> getOrderListByCreateTime(int shopId, long from, long to, int pageIndex) throws IOException {
         OrdersRequest ordersRequest = retrofit.create(OrdersRequest.class);
         GetOrderListByCreateTimeRequestBody requestBody = new GetOrderListByCreateTimeRequestBody();
         requestBody.setPartner_id(partnerId);
         requestBody.setTimestamp(System.currentTimeMillis() / 1000);
         requestBody.setShopid(shopId);
-        requestBody.setCreate_time_from(from);
-        requestBody.setCreate_time_to(to);
+        requestBody.setCreate_time_from(from / 1000);
+        requestBody.setCreate_time_to(to / 1000);
+        if (pageIndex < 0) {
+            pageIndex = 0;
+        }
+        requestBody.setPagination_offset(pageIndex);
         // TODO: 2018/9/10 apiUrl需要改成通过获取注解的方式
         String apiUrl = serverBaseUrl + "orders/basics";
         Gson gson = new Gson();
@@ -151,7 +158,7 @@ public class ShopeeApiManager {
      * 获取订单详细信息
      *
      * @param shopId      店铺id
-     * @param orderSnList 订单sn
+     * @param orderSnList 订单sn,最多只能包含50条数据
      * @return
      * @throws IOException
      */
@@ -232,6 +239,26 @@ public class ShopeeApiManager {
         String bodyJson = gson.toJson(requestBody);
         String authorization = EncryptUtils.sha256_HMAC(apiUrl + "|" + bodyJson, key);
         Call<LogisticsInitResponse> call = logisticsRequest.logisticInit(authorization, requestBody);
+        return call.execute();
+    }
+
+    /**
+     * 获取已授权店铺id
+     *
+     * @return
+     * @throws IOException
+     */
+    public Response<GetShopsByPartnerResponse> getShopsByPartner() throws IOException {
+        ShopRequest shopRequest = retrofit.create(ShopRequest.class);
+        GetShopsByPartnerRequestBody requestBody = new GetShopsByPartnerRequestBody();
+        requestBody.setPartner_id(partnerId);
+        requestBody.setTimestamp(System.currentTimeMillis() / 1000);
+        // TODO: 2018/9/10 apiUrl需要改成通过获取注解的方式
+        String apiUrl = serverBaseUrl + "shop/get_partner_shop";
+        Gson gson = new Gson();
+        String bodyJson = gson.toJson(requestBody);
+        String authorization = EncryptUtils.sha256_HMAC(apiUrl + "|" + bodyJson, key);
+        Call<GetShopsByPartnerResponse> call = shopRequest.getShopsByPartner(authorization, requestBody);
         return call.execute();
     }
 

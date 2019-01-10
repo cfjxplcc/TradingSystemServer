@@ -1,5 +1,8 @@
 package com.fjnu.tradingsysrem.common.retrofit;
 
+import com.fjnu.tradingsysrem.common.gson.adapter.DoubleDefault0Adapter;
+import com.fjnu.tradingsysrem.common.gson.adapter.FloatDefault0Adapter;
+import com.fjnu.tradingsysrem.common.gson.adapter.IntegerDefault0Adapter;
 import com.fjnu.tradingsysrem.common.retrofit.factory.EmptyJsonLenientConverterFactory;
 import com.fjnu.tradingsysrem.common.retrofit.factory.NobodyConverterFactory;
 import com.fjnu.tradingsysrem.common.retrofit.ssl.IgnoreHttpsCertificateSSLSocketClient;
@@ -63,9 +66,16 @@ public class RetrofitManager {
                 .build();
 
         Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Double.class, new DoubleDefault0Adapter())
+                .registerTypeAdapter(double.class, new DoubleDefault0Adapter())
+                .registerTypeAdapter(Integer.class, new IntegerDefault0Adapter())
+                .registerTypeAdapter(int.class, new IntegerDefault0Adapter())
+                .registerTypeAdapter(Float.class, new FloatDefault0Adapter())
+                .registerTypeAdapter(float.class, new FloatDefault0Adapter())
                 .registerTypeAdapter(Timestamp.class, (JsonDeserializer<Timestamp>) (json, typeOfT, context) -> new Timestamp(json.getAsJsonPrimitive().getAsLong()))
                 .registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (json, typeOfT, context) -> new Date(json.getAsJsonPrimitive().getAsLong()))
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .serializeNulls()
                 .create();
 
         Retrofit retrofit = new Retrofit.Builder()
