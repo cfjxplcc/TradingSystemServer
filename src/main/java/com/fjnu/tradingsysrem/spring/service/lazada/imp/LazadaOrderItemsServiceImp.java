@@ -1,10 +1,10 @@
-package com.fjnu.tradingsysrem.spring.service.imp;
+package com.fjnu.tradingsysrem.spring.service.lazada.imp;
 
 import com.fjnu.tradingsysrem.spring.dao.LazadaOrderInfoDao;
 import com.fjnu.tradingsysrem.spring.dao.LazadaOrderItemsInfoDao;
 import com.fjnu.tradingsysrem.spring.model.lazada.LazadaOrderInfo;
 import com.fjnu.tradingsysrem.spring.model.lazada.LazadaOrderItemsInfo;
-import com.fjnu.tradingsysrem.spring.service.LazadaOrderItemsInfoService;
+import com.fjnu.tradingsysrem.spring.service.lazada.LazadaOrderItemsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Service
 @Transactional(readOnly = true)
-public class LazadaOrderItemsInfoServiceImp implements LazadaOrderItemsInfoService {
+public class LazadaOrderItemsServiceImp implements LazadaOrderItemsService {
 
     @Autowired
     private LazadaOrderItemsInfoDao lazadaOrderItemsInfoDao;

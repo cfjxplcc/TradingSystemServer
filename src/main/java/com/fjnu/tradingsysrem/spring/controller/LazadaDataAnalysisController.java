@@ -1,7 +1,7 @@
 package com.fjnu.tradingsysrem.spring.controller;
 
-import com.fjnu.tradingsysrem.spring.service.LazadaDataAnalysisService;
-import com.fjnu.tradingsysrem.spring.service.LazadaShopInfoService;
+import com.fjnu.tradingsysrem.spring.service.lazada.LazadaDataAnalysisService;
+import com.fjnu.tradingsysrem.spring.service.lazada.LazadaShopInfoService;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

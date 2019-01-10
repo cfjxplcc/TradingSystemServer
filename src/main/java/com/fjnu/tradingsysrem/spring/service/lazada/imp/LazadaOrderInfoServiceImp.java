@@ -1,4 +1,4 @@
-package com.fjnu.tradingsysrem.spring.service.imp;
+package com.fjnu.tradingsysrem.spring.service.lazada.imp;
 
 import com.fjnu.tradingsysrem.lazada.platform.LazadaApiManager;
 import com.fjnu.tradingsysrem.lazada.platform.bean.*;
@@ -8,7 +8,7 @@ import com.fjnu.tradingsysrem.spring.model.lazada.LazadaOrderInfo;
 import com.fjnu.tradingsysrem.spring.model.lazada.LazadaOrderItemsInfo;
 import com.fjnu.tradingsysrem.spring.model.lazada.LazadaShopInfo;
 import com.fjnu.tradingsysrem.spring.model.lazada.PurchaseOrderInfo;
-import com.fjnu.tradingsysrem.spring.service.LazadaOrderInfoService;
+import com.fjnu.tradingsysrem.spring.service.lazada.LazadaOrderInfoService;
 import com.fjnu.tradingsysrem.spring.utils.DateUtils;
 import com.fjnu.tradingsysrem.spring.utils.TextUtils;
 import com.lazada.lazop.util.ApiException;

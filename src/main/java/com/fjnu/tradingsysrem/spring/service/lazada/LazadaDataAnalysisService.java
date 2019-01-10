@@ -1,4 +1,4 @@
-package com.fjnu.tradingsysrem.spring.service;
+package com.fjnu.tradingsysrem.spring.service.lazada;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 

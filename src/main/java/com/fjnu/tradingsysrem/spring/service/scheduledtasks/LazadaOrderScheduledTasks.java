@@ -68,7 +68,7 @@ import com.fjnu.tradingsysrem.spring.model.ExchangeRate;
 import com.fjnu.tradingsysrem.spring.model.lazada.LazadaOrderInfo;
 import com.fjnu.tradingsysrem.spring.model.lazada.LazadaOrderItemsInfo;
 import com.fjnu.tradingsysrem.spring.model.lazada.LazadaShopInfo;
-import com.fjnu.tradingsysrem.spring.service.LazadaOrderInfoService;
+import com.fjnu.tradingsysrem.spring.service.lazada.LazadaOrderInfoService;
 import com.fjnu.tradingsysrem.spring.utils.DateUtils;
 import com.fjnu.tradingsysrem.spring.utils.TextUtils;
 import com.lazada.lazop.util.ApiException;

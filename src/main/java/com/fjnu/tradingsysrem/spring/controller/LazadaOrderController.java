@@ -2,7 +2,7 @@ package com.fjnu.tradingsysrem.spring.controller;
 
 import com.fjnu.tradingsysrem.lazada.platform.bean.ShipmentProviderBean;
 import com.fjnu.tradingsysrem.spring.model.lazada.LazadaOrderInfo;
-import com.fjnu.tradingsysrem.spring.service.LazadaOrderInfoService;
+import com.fjnu.tradingsysrem.spring.service.lazada.LazadaOrderInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import java.util.Set;
  * Created by LCC on 2018/3/20.
  */
 @RestController
-public class LazadaOrderInfoController {
+public class LazadaOrderController {
 
     @Autowired
     private LazadaOrderInfoService lazadaOrderInfoService;

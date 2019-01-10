@@ -1,4 +1,4 @@
-package com.fjnu.tradingsysrem.spring.service;
+package com.fjnu.tradingsysrem.spring.service.lazada;
 
 /**
  * Created by LCC on 2018/6/4.

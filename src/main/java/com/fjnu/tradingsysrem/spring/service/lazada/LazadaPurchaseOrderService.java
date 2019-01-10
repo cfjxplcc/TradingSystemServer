@@ -1,4 +1,4 @@
-package com.fjnu.tradingsysrem.spring.service;
+package com.fjnu.tradingsysrem.spring.service.lazada;
 
 import com.fjnu.tradingsysrem.spring.model.lazada.PurchaseOrderInfo;
 
@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by LCC on 2018/3/26.
  */
-public interface PurchaseOrderInfoService {
+public interface LazadaPurchaseOrderService {
 
     String save(PurchaseOrderInfo purchaseOrderInfo);
 

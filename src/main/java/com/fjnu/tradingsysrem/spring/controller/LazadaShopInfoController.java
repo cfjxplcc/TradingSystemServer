@@ -1,7 +1,7 @@
 package com.fjnu.tradingsysrem.spring.controller;
 
 import com.fjnu.tradingsysrem.spring.model.lazada.LazadaShopInfo;
-import com.fjnu.tradingsysrem.spring.service.LazadaShopInfoService;
+import com.fjnu.tradingsysrem.spring.service.lazada.LazadaShopInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

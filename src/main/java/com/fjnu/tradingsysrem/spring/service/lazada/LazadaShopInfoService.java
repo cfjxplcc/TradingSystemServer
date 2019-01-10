@@ -1,4 +1,4 @@
-package com.fjnu.tradingsysrem.spring.service;
+package com.fjnu.tradingsysrem.spring.service.lazada;
 
 import com.fjnu.tradingsysrem.spring.model.lazada.LazadaShopInfo;
 

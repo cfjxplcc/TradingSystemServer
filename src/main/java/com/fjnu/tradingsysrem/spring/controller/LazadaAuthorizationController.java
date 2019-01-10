@@ -1,7 +1,7 @@
 package com.fjnu.tradingsysrem.spring.controller;
 
 import com.fjnu.tradingsysrem.lazada.platform.LazadaApiManager;
-import com.fjnu.tradingsysrem.spring.service.LazadaAuthorizationService;
+import com.fjnu.tradingsysrem.spring.service.lazada.LazadaAuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,8 +1,8 @@
-package com.fjnu.tradingsysrem.spring.service.imp;
+package com.fjnu.tradingsysrem.spring.service.lazada.imp;
 
 import com.fjnu.tradingsysrem.spring.dao.LazadaShopInfoDao;
 import com.fjnu.tradingsysrem.spring.model.lazada.LazadaShopInfo;
-import com.fjnu.tradingsysrem.spring.service.LazadaShopInfoService;
+import com.fjnu.tradingsysrem.spring.service.lazada.LazadaShopInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

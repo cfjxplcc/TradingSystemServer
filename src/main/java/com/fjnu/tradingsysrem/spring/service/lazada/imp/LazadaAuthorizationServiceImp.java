@@ -1,11 +1,11 @@
-package com.fjnu.tradingsysrem.spring.service.imp;
+package com.fjnu.tradingsysrem.spring.service.lazada.imp;
 
 import com.alibaba.fastjson.JSON;
 import com.fjnu.tradingsysrem.lazada.platform.LazadaApiManager;
 import com.fjnu.tradingsysrem.lazada.platform.bean.AccessTokenBean;
 import com.fjnu.tradingsysrem.spring.dao.LazadaShopInfoDao;
 import com.fjnu.tradingsysrem.spring.model.lazada.LazadaShopInfo;
-import com.fjnu.tradingsysrem.spring.service.LazadaAuthorizationService;
+import com.fjnu.tradingsysrem.spring.service.lazada.LazadaAuthorizationService;
 import com.fjnu.tradingsysrem.spring.utils.DateUtils;
 import com.fjnu.tradingsysrem.spring.utils.TextUtils;
 import com.lazada.lazop.api.LazopResponse;
