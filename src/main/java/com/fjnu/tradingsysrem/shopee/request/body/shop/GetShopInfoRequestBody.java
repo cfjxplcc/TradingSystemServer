@@ -7,13 +7,4 @@ import com.fjnu.tradingsysrem.shopee.request.body.ShopeeBaseRequestBody;
  */
 public class GetShopInfoRequestBody extends ShopeeBaseRequestBody {
 
-    private String ordersn;
-
-    public String getOrdersn() {
-        return ordersn;
-    }
-
-    public void setOrdersn(String ordersn) {
-        this.ordersn = ordersn;
-    }
 }

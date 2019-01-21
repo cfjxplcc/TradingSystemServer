@@ -25,8 +25,8 @@ public class ShopeeOrderScheduledTask {
     /**
      * 获取过去6小时内的新订单
      */
-//    @Scheduled(cron = "0 0 0/6 * * *")//每6小时执行一次
-    @Scheduled(fixedRate = 60 * 60 * 1000)//每间隔1小时执行一次
+    @Scheduled(cron = "0 0 0/6 * * *")//每6小时执行一次
+//    @Scheduled(fixedRate = 60 * 60 * 1000)//每间隔1小时执行一次
     public void asyncNewShopeeOrderInfo() {
         System.out.println("-------------> asyncNewShopeeOrderInfo task begin <-------------");
         long methodBeginTime = System.currentTimeMillis();

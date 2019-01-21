@@ -9,10 +9,34 @@ import java.util.List;
  */
 public interface ShopeeShopService {
 
+    /**
+     * 获取本地所有店铺信息
+     *
+     * @return
+     */
     List<ShopeeShopInfo> getShopeeShopInfoList();
 
+    /**
+     * 接收店铺授权码
+     *
+     * @param shopId
+     * @return
+     */
     String receiveShopeeAuthorizationShopInfo(int shopId);
 
-    void synchShopeeShopInfoFromPlatform();
+    /**
+     * 同步shopee平台已授权店铺信息
+     *
+     * @return
+     */
+    String synchShopeeShopInfoFromPlatform();
+
+    /**
+     * 接收取消店铺授权码
+     *
+     * @param shopId
+     * @return
+     */
+    String receiveShopeeCancelAuthorizationShopInfo(int shopId);
 
 }

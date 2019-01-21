@@ -34,15 +34,17 @@ public class ShopeeShopController {
     }
 
     /**
+     * 获取所有店铺信息
+     *
      * @return
      */
-    @GetMapping("/shopinfo_all")
+    @GetMapping("/shop_info_all")
     public ResponseEntity<List<ShopeeShopInfo>> getShopeeShopInfoList() {
         return ResponseEntity.ok().body(shopeeShopService.getShopeeShopInfoList());
     }
 
     /**
-     * 获取店铺取消授权url
+     * 接收授权结果
      *
      * @param shopId
      * @return
@@ -50,6 +52,28 @@ public class ShopeeShopController {
     @GetMapping("/receive_authorization_result/")
     public ResponseEntity<String> receiveShopeeAuthorizationResult(@RequestParam("shop_id") int shopId) {
         return ResponseEntity.ok().body(shopeeShopService.receiveShopeeAuthorizationShopInfo(shopId));
+    }
+
+    /**
+     * 获取取消店铺授权url
+     *
+     * @return
+     */
+    @GetMapping("/cancel_authorization/getUrl")
+    public ResponseEntity<String> getCancelAuthorizationUrl() {
+        String url = ShopeeApiManager.getInstance().getShopCancelAuthorizeUrl();
+        return ResponseEntity.ok().body(url);
+    }
+
+    /**
+     * 接收授权结果
+     *
+     * @param shopId
+     * @return
+     */
+    @GetMapping("/receive_cancel_authorization_result/")
+    public ResponseEntity<String> receiveShopeeCancelAuthorizationResult(@RequestParam("shop_id") int shopId) {
+        return ResponseEntity.ok().body(shopeeShopService.receiveShopeeCancelAuthorizationShopInfo(shopId));
     }
 
 }
