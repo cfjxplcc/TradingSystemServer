@@ -7,10 +7,12 @@ import com.fjnu.tradingsysrem.shopee.response.orders.GetOrdersResponse;
 import com.fjnu.tradingsysrem.spring.dao.ExchangeRateDao;
 import com.fjnu.tradingsysrem.spring.dao.shopee.ShopeeOrderInfoDao;
 import com.fjnu.tradingsysrem.spring.dao.shopee.ShopeeOrderItemsInfoDao;
+import com.fjnu.tradingsysrem.spring.dao.shopee.ShopeePurchaseOrderInfoDao;
 import com.fjnu.tradingsysrem.spring.dao.shopee.ShopeeShopInfoDao;
 import com.fjnu.tradingsysrem.spring.model.ExchangeRate;
 import com.fjnu.tradingsysrem.spring.model.shopee.ShopeeOrderInfo;
 import com.fjnu.tradingsysrem.spring.model.shopee.ShopeeOrderItemsInfo;
+import com.fjnu.tradingsysrem.spring.model.shopee.ShopeePurchaseOrderInfo;
 import com.fjnu.tradingsysrem.spring.model.shopee.ShopeeShopInfo;
 import com.fjnu.tradingsysrem.spring.service.shopee.ShopeeOrderService;
 import com.fjnu.tradingsysrem.spring.utils.TextUtils;
@@ -21,9 +23,7 @@ import retrofit2.Response;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by luochunchen on 2018/12/25.
@@ -40,6 +40,8 @@ public class ShopeeOrderServiceImp implements ShopeeOrderService {
     private ShopeeOrderItemsInfoDao shopeeOrderItemsInfoDao;
     @Autowired
     private ShopeeShopInfoDao shopeeShopInfoDao;
+    @Autowired
+    private ShopeePurchaseOrderInfoDao shopeePurchaseOrderInfoDao;
 
     @Override
     @Transactional
@@ -227,6 +229,41 @@ public class ShopeeOrderServiceImp implements ShopeeOrderService {
         shopeeOrderInfo.setOverseasExpressPrice(overseasExpressPrice);
         shopeeOrderInfoDao.saveAndFlush(shopeeOrderInfo);
         return true;
+    }
+
+    @Override
+    public Set<ShopeeOrderInfo> getByOrderExpressNumber(String orderExpressNumber) {
+        Set<ShopeeOrderInfo> lazadaOrderInfoSet = new HashSet<>();
+        List<ShopeePurchaseOrderInfo> purchaseOrderInfoList = shopeePurchaseOrderInfoDao.findAllByOrderExpressNumber(orderExpressNumber);
+        for (ShopeePurchaseOrderInfo purchaseOrderInfo : purchaseOrderInfoList) {
+            lazadaOrderInfoSet.add(purchaseOrderInfo.getShopeeOrderInfo());
+        }
+        return lazadaOrderInfoSet;
+    }
+
+    @Override
+    public Set<ShopeeOrderInfo> getByPurchaseOrderExpressIsNull() {
+        Set<ShopeeOrderInfo> lazadaOrderInfoSet = new HashSet<>();
+        List<ShopeePurchaseOrderInfo> purchaseOrderInfoList = shopeePurchaseOrderInfoDao.findAllByOrderExpressNumberIsNull();
+        for (ShopeePurchaseOrderInfo purchaseOrderInfo : purchaseOrderInfoList) {
+            lazadaOrderInfoSet.add(purchaseOrderInfo.getShopeeOrderInfo());
+        }
+        return lazadaOrderInfoSet;
+    }
+
+    @Override
+    public List<ShopeeOrderInfo> getByOrderDeliveryStatusIsFalse() {
+        return shopeeOrderInfoDao.findAllByDeliveryIsFalseOrderByCreateTimeAsc();
+    }
+
+    @Override
+    public Set<ShopeeOrderInfo> getByPurchaseOrderInfoThirdPartyOrderId(String thirdPartyOrderId) {
+        Set<ShopeeOrderInfo> lazadaOrderInfoSet = new HashSet<>();
+        List<ShopeePurchaseOrderInfo> purchaseOrderInfoList = shopeePurchaseOrderInfoDao.findAllByThirdPartyOrderId(thirdPartyOrderId);
+        for (ShopeePurchaseOrderInfo purchaseOrderInfo : purchaseOrderInfoList) {
+            lazadaOrderInfoSet.add(purchaseOrderInfo.getShopeeOrderInfo());
+        }
+        return lazadaOrderInfoSet;
     }
 
 }

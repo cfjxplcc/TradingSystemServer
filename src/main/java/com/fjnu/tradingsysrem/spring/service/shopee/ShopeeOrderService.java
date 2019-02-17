@@ -4,6 +4,7 @@ import com.fjnu.tradingsysrem.spring.model.shopee.ShopeeOrderInfo;
 import com.fjnu.tradingsysrem.spring.model.shopee.ShopeeShopInfo;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by luochunchen on 2018/12/17.
@@ -74,4 +75,34 @@ public interface ShopeeOrderService {
      * @return
      */
     boolean updateOverseasExpressPrice(String orderSn, float overseasExpressPrice);
+
+    /**
+     * 根据采购快递单号查询
+     *
+     * @param orderExpressNumber 采购快递单号
+     * @return
+     */
+    Set<ShopeeOrderInfo> getByOrderExpressNumber(String orderExpressNumber);
+
+    /**
+     * 查询采购快递单号为空的订单
+     *
+     * @return
+     */
+    Set<ShopeeOrderInfo> getByPurchaseOrderExpressIsNull();
+
+    /**
+     * 查询还未出货的订单
+     *
+     * @return
+     */
+    List<ShopeeOrderInfo> getByOrderDeliveryStatusIsFalse();
+
+    /**
+     * 根据采购第三方平台订单id查询
+     *
+     * @param thirdPartyOrderId 第三方平台订单id
+     * @return
+     */
+    Set<ShopeeOrderInfo> getByPurchaseOrderInfoThirdPartyOrderId(String thirdPartyOrderId);
 }

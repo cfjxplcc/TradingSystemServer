@@ -22,4 +22,9 @@ public interface ShopeePurchaseOrderInfoDao {
 
     List<ShopeePurchaseOrderInfo> findAllByShopeeOrderInfo(ShopeeOrderInfo shopeeOrderInfo);
 
+    List<ShopeePurchaseOrderInfo> findAllByOrderExpressNumber(String orderExpressNumber);
+
+    List<ShopeePurchaseOrderInfo> findAllByOrderExpressNumberIsNull();
+
+    List<ShopeePurchaseOrderInfo> findAllByThirdPartyOrderId(String id);
 }

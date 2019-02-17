@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by luochunchen on 2019/1/21.
@@ -93,6 +94,48 @@ public class ShopeeOrderController {
     public ResponseEntity<String> updateOverseasExpressPrice(@PathVariable("orderSn") String orderSn, @RequestParam("OverseasExpressPrice") float overseasExpressPrice) {
         boolean result = shopeeOrderService.updateOverseasExpressPrice(orderSn, overseasExpressPrice);
         return ResponseEntity.ok().body("Updated is successful:" + result);
+    }
+
+    /**
+     * 根据采购快递单号查询
+     *
+     * @param orderExpressNumber 采购快递单号
+     * @return
+     */
+    @GetMapping("/get_by_purchase_order_express_number")
+    public ResponseEntity<Set<ShopeeOrderInfo>> getByPurchaseOrderExpressNumber(@RequestParam("OrderExpressNumber") String orderExpressNumber) {
+        return ResponseEntity.ok().body(shopeeOrderService.getByOrderExpressNumber(orderExpressNumber));
+    }
+
+    /**
+     * 查询采购快递单号为空的订单
+     *
+     * @return
+     */
+    @GetMapping("/get_by_purchase_order_express_is_null")
+    public ResponseEntity<Set<ShopeeOrderInfo>> getByPurchaseOrderExpressIsNull() {
+        return ResponseEntity.ok().body(shopeeOrderService.getByPurchaseOrderExpressIsNull());
+    }
+
+    /**
+     * 查询还未出货的订单
+     *
+     * @return
+     */
+    @GetMapping("/get_by_order_delivery_status_is_false")
+    public ResponseEntity<List<ShopeeOrderInfo>> getByOrderDeliveryStatusIsFalse() {
+        return ResponseEntity.ok().body(shopeeOrderService.getByOrderDeliveryStatusIsFalse());
+    }
+
+    /**
+     * 根据采购第三方平台订单id查询
+     *
+     * @param thirdPartyOrderId 第三方平台订单id
+     * @return
+     */
+    @GetMapping("/get_by_purchase_order_third_party_order_id")
+    public ResponseEntity<Set<ShopeeOrderInfo>> getByPurchaseOrderInfoThirdPartyOrderId(@RequestParam("third_party_order_id") String thirdPartyOrderId) {
+        return ResponseEntity.ok().body(shopeeOrderService.getByPurchaseOrderInfoThirdPartyOrderId(thirdPartyOrderId));
     }
 
 }

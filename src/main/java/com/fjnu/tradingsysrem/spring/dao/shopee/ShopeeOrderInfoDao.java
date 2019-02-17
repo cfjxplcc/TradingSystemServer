@@ -61,5 +61,5 @@ public interface ShopeeOrderInfoDao {
      */
     List<ShopeeOrderInfo> findAllByCreateTimeBetweenOrderByShopeeShopInfoAscCreateTimeDesc(java.sql.Timestamp beginTime, java.sql.Timestamp endTime);
 
-
+    List<ShopeeOrderInfo> findAllByDeliveryIsFalseOrderByCreateTimeAsc();
 }
