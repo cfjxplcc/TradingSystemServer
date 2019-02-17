@@ -55,7 +55,7 @@
  * 年（可选）           留空,1970-2099,
  */
 
-package com.fjnu.tradingsysrem.spring.service.scheduledtasks;
+package com.fjnu.tradingsysrem.spring.service.lazada.tasks;
 
 import com.fjnu.tradingsysrem.lazada.platform.LazadaApiManager;
 import com.fjnu.tradingsysrem.lazada.platform.bean.OrderBean;

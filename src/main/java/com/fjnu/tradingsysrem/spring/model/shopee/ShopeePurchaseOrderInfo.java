@@ -35,8 +35,8 @@ public class ShopeePurchaseOrderInfo {
     @Column(name = "TOTAL_PRICE")
     private Float totalPrice;
 
-    @Column(name = "ITEM_TOTAL_MUNBER")
-    private int itemTotalMunber;
+    @Column(name = "ITEM_TOTAL_NUMBER")
+    private int itemTotalNumber;
 
     @Column(name = "ORDER_URL")
     private String orderUrl;
@@ -98,12 +98,12 @@ public class ShopeePurchaseOrderInfo {
         this.totalPrice = totalPrice;
     }
 
-    public int getItemTotalMunber() {
-        return itemTotalMunber;
+    public int getItemTotalNumber() {
+        return itemTotalNumber;
     }
 
-    public void setItemTotalMunber(int itemTotalMunber) {
-        this.itemTotalMunber = itemTotalMunber;
+    public void setItemTotalNumber(int itemTotalNumber) {
+        this.itemTotalNumber = itemTotalNumber;
     }
 
     public String getOrderUrl() {

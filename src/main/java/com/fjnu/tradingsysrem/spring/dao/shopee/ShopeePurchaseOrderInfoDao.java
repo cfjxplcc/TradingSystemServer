@@ -1,7 +1,10 @@
 package com.fjnu.tradingsysrem.spring.dao.shopee;
 
+import com.fjnu.tradingsysrem.spring.model.shopee.ShopeeOrderInfo;
 import com.fjnu.tradingsysrem.spring.model.shopee.ShopeePurchaseOrderInfo;
 import org.springframework.data.repository.RepositoryDefinition;
+
+import java.util.List;
 
 /**
  * Created by luochunchen on 2018/12/14.
@@ -16,5 +19,7 @@ public interface ShopeePurchaseOrderInfoDao {
     ShopeePurchaseOrderInfo findById(String id);
 
     void deleteById(String id);
+
+    List<ShopeePurchaseOrderInfo> findAllByShopeeOrderInfo(ShopeeOrderInfo shopeeOrderInfo);
 
 }

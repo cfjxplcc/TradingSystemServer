@@ -50,7 +50,7 @@ public class ShopeeOrderItemsInfo {
     private float variationDiscountedPrice;
 
     @Column(name = "IS_WHOLESALE")
-    private boolean isWholesale;
+    private boolean wholesale;
 
     public ShopeeOrderItemsInfo() {
     }
@@ -66,7 +66,7 @@ public class ShopeeOrderItemsInfo {
         variationQuantityPurchased = item.getVariation_quantity_purchased();
         variationOriginalPrice = item.getVariation_original_price();
         variationDiscountedPrice = item.getVariation_discounted_price();
-        isWholesale = item.isIs_wholesale();
+        wholesale = item.isIs_wholesale();
     }
 
     public String getId() {
@@ -158,10 +158,10 @@ public class ShopeeOrderItemsInfo {
     }
 
     public boolean isWholesale() {
-        return isWholesale;
+        return wholesale;
     }
 
     public void setWholesale(boolean wholesale) {
-        isWholesale = wholesale;
+        this.wholesale = wholesale;
     }
 }

@@ -107,7 +107,7 @@ public class ShopeeOrderInfo {
     private float overseasExpressPrice;
 
     @Column(name = "IS_DELIVERY")
-    private boolean isDelivery;
+    private boolean delivery;
 
     @Column(name = "REMARKS")
     private String remarks;
@@ -121,7 +121,8 @@ public class ShopeeOrderInfo {
         this.exchangeRate = exchangeRate;
         cashOnDelivery = orders.isCod();
         trackingNo = orders.getTracking_no();
-        dateToShip = new Timestamp(orders.getDays_to_ship() * 1000);
+        long tempDateToShip = (orders.getCreate_time() + orders.getDays_to_ship() * 24 * 60 * 60) * 1000;
+        dateToShip = new Timestamp(tempDateToShip);
         GetOrderDetailsResponse.RecipientAddress recipientAddress = orders.getRecipient_address();
         recipientName = recipientAddress.getName();
         recipientPhone = recipientAddress.getPhone();
@@ -145,7 +146,7 @@ public class ShopeeOrderInfo {
         if (orders.getPay_time() > 0) {
             payTime = new Timestamp(orders.getPay_time() * 1000);
         }
-        isDelivery = false;
+        delivery = false;
     }
 
     public String getOrderSn() {
@@ -367,11 +368,11 @@ public class ShopeeOrderInfo {
     }
 
     public boolean isDelivery() {
-        return isDelivery;
+        return delivery;
     }
 
     public void setDelivery(boolean delivery) {
-        isDelivery = delivery;
+        this.delivery = delivery;
     }
 
     public String getRemarks() {

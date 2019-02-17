@@ -7,11 +7,13 @@ import com.fjnu.tradingsysrem.shopee.response.orders.GetOrdersResponse;
 import com.fjnu.tradingsysrem.spring.dao.ExchangeRateDao;
 import com.fjnu.tradingsysrem.spring.dao.shopee.ShopeeOrderInfoDao;
 import com.fjnu.tradingsysrem.spring.dao.shopee.ShopeeOrderItemsInfoDao;
+import com.fjnu.tradingsysrem.spring.dao.shopee.ShopeeShopInfoDao;
 import com.fjnu.tradingsysrem.spring.model.ExchangeRate;
 import com.fjnu.tradingsysrem.spring.model.shopee.ShopeeOrderInfo;
 import com.fjnu.tradingsysrem.spring.model.shopee.ShopeeOrderItemsInfo;
 import com.fjnu.tradingsysrem.spring.model.shopee.ShopeeShopInfo;
 import com.fjnu.tradingsysrem.spring.service.shopee.ShopeeOrderService;
+import com.fjnu.tradingsysrem.spring.utils.TextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,8 @@ public class ShopeeOrderServiceImp implements ShopeeOrderService {
     private ExchangeRateDao exchangeRateDao;
     @Autowired
     private ShopeeOrderItemsInfoDao shopeeOrderItemsInfoDao;
+    @Autowired
+    private ShopeeShopInfoDao shopeeShopInfoDao;
 
     @Override
     @Transactional
@@ -96,7 +100,7 @@ public class ShopeeOrderServiceImp implements ShopeeOrderService {
             }
         }
 
-        ExchangeRate exchangeRate = exchangeRateDao.findFirstByCountryCodeOrderByDateDesc(shopeeShopInfo.getCountryCode());
+        ExchangeRate exchangeRate = exchangeRateDao.findFirstByCountryCodeOrderByDateDesc(shopeeShopInfo.getCountryCode().toLowerCase());
         // 从平台获取数据库中不存在的订单数据详细信息
         List<String> orderSnList = new ArrayList<>();
         for (int i = 0, count = 0; i < orderList.size(); i++) {
@@ -152,5 +156,77 @@ public class ShopeeOrderServiceImp implements ShopeeOrderService {
         }
     }
 
+    @Override
+    public ShopeeOrderInfo getBySn(String orderSn) {
+        if (TextUtils.isEmpty(orderSn)) {
+            return null;
+        }
+        return shopeeOrderInfoDao.findByOrderSn(orderSn);
+    }
+
+    @Override
+    public List<ShopeeOrderInfo> getAllByShopInfoAndParameters(int shopId, String orderStatus, String beginTime, String endTime) {
+        ShopeeShopInfo shopeeShopInfo = shopeeShopInfoDao.findByShopId(shopId);
+        if (shopeeShopInfo == null) {
+            return new ArrayList<>();
+        }
+
+        java.sql.Timestamp begin = new Timestamp(Long.valueOf(beginTime));
+        java.sql.Timestamp end = new Timestamp(Long.valueOf(endTime));
+
+        if (TextUtils.isEmpty(orderStatus)) {
+            return shopeeOrderInfoDao.findAllByShopeeShopInfoAndCreateTimeBetweenOrderByShopeeShopInfoAscCreateTimeDesc(shopeeShopInfo, begin, end);
+        } else {
+            return shopeeOrderInfoDao.findAllByShopeeShopInfoAndOrderStatusAndCreateTimeBetweenOrderByShopeeShopInfoAscCreateTimeDesc(shopeeShopInfo, orderStatus, begin, end);
+        }
+    }
+
+    @Override
+    public List<ShopeeOrderInfo> getAllByParameters(String orderStatus, String beginTime, String endTime) {
+        java.sql.Timestamp begin = new Timestamp(Long.valueOf(beginTime));
+        java.sql.Timestamp end = new Timestamp(Long.valueOf(endTime));
+
+        if (TextUtils.isEmpty(orderStatus)) {
+            return shopeeOrderInfoDao.findAllByCreateTimeBetweenOrderByShopeeShopInfoAscCreateTimeDesc(begin, end);
+        } else {
+            return shopeeOrderInfoDao.findAllByOrderStatusAndCreateTimeBetweenOrderByShopeeShopInfoAscCreateTimeDesc(orderStatus, begin, end);
+        }
+    }
+
+    @Override
+    @Transactional
+    public boolean updateDeliveryStatus(String orderSn, boolean isDelivery) {
+        ShopeeOrderInfo shopeeOrderInfo = shopeeOrderInfoDao.findByOrderSn(orderSn);
+        if (shopeeOrderInfo == null) {
+            return false;
+        }
+        shopeeOrderInfo.setDelivery(isDelivery);
+        shopeeOrderInfoDao.saveAndFlush(shopeeOrderInfo);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean updateRemark(String orderSn, String remark) {
+        ShopeeOrderInfo shopeeOrderInfo = shopeeOrderInfoDao.findByOrderSn(orderSn);
+        if (shopeeOrderInfo == null) {
+            return false;
+        }
+        shopeeOrderInfo.setRemarks(remark);
+        shopeeOrderInfoDao.saveAndFlush(shopeeOrderInfo);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean updateOverseasExpressPrice(String orderSn, float overseasExpressPrice) {
+        ShopeeOrderInfo shopeeOrderInfo = shopeeOrderInfoDao.findByOrderSn(orderSn);
+        if (shopeeOrderInfo == null) {
+            return false;
+        }
+        shopeeOrderInfo.setOverseasExpressPrice(overseasExpressPrice);
+        shopeeOrderInfoDao.saveAndFlush(shopeeOrderInfo);
+        return true;
+    }
 
 }

@@ -1,4 +1,4 @@
-package com.fjnu.tradingsysrem.spring.service.scheduledtasks;
+package com.fjnu.tradingsysrem.spring.service.lazada.tasks;
 
 import com.fjnu.tradingsysrem.spring.service.lazada.LazadaAuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
