@@ -88,6 +88,8 @@ public class ShopeeApiManager {
     }
 
     /**
+     * 获取店铺取消授权url
+     *
      * @return
      */
     public String getShopCancelAuthorizeUrl() {
@@ -112,13 +114,9 @@ public class ShopeeApiManager {
         // TODO: 2018/9/10 apiUrl需要改成通过获取注解的方式
         String apiUrl = serverBaseUrl + "shop/get";
         // 注意：一定要使用Retrofit使用的第三方Json解析库，否则authorization不准确
-        Gson gson = new Gson();
+        Gson gson = RetrofitManager.getGson();
         String bodyJson = gson.toJson(requestBody);
-       /* System.out.println(bodyJson);
-        System.out.println(apiUrl + "|" + bodyJson);
-        System.out.println("key:" + key);*/
         String authorization = EncryptUtils.sha256_HMAC(apiUrl + "|" + bodyJson, key);
-//        System.out.println(authorization);
         Call<GetShopInfoResponse> call = shopRequest.getShopInfo(authorization, requestBody);
         return call.execute();
     }
@@ -147,7 +145,7 @@ public class ShopeeApiManager {
         requestBody.setPagination_offset(pageIndex);
         // TODO: 2018/9/10 apiUrl需要改成通过获取注解的方式
         String apiUrl = serverBaseUrl + "orders/basics";
-        Gson gson = new Gson();
+        Gson gson = RetrofitManager.getGson();
         String bodyJson = gson.toJson(requestBody);
         String authorization = EncryptUtils.sha256_HMAC(apiUrl + "|" + bodyJson, key);
         Call<GetOrdersResponse> call = ordersRequest.getOrderListByCreateTime(authorization, requestBody);
@@ -171,7 +169,7 @@ public class ShopeeApiManager {
         requestBody.setOrdersn_list(orderSnList);
         // TODO: 2018/9/10 apiUrl需要改成通过获取注解的方式
         String apiUrl = serverBaseUrl + "orders/detail";
-        Gson gson = new Gson();
+        Gson gson = RetrofitManager.getGson();
         String bodyJson = gson.toJson(requestBody);
         String authorization = EncryptUtils.sha256_HMAC(apiUrl + "|" + bodyJson, key);
         Call<GetOrderDetailsResponse> call = ordersRequest.getOrderDetails(authorization, requestBody);
@@ -195,7 +193,7 @@ public class ShopeeApiManager {
         requestBody.setOrdersn(orderSn);
         // TODO: 2018/9/10 apiUrl需要改成通过获取注解的方式
         String apiUrl = serverBaseUrl + "logistics/init_info/get";
-        Gson gson = new Gson();
+        Gson gson = RetrofitManager.getGson();
         String bodyJson = gson.toJson(requestBody);
         String authorization = EncryptUtils.sha256_HMAC(apiUrl + "|" + bodyJson, key);
         Call<GetLogisticInfoResponse> call = logisticsRequest.getLogisticInfo(authorization, requestBody);
@@ -235,7 +233,7 @@ public class ShopeeApiManager {
         }
         // TODO: 2018/9/10 apiUrl需要改成通过获取注解的方式
         String apiUrl = serverBaseUrl + "logistics/init";
-        Gson gson = new Gson();
+        Gson gson = RetrofitManager.getGson();
         String bodyJson = gson.toJson(requestBody);
         String authorization = EncryptUtils.sha256_HMAC(apiUrl + "|" + bodyJson, key);
         Call<LogisticsInitResponse> call = logisticsRequest.logisticInit(authorization, requestBody);
@@ -255,7 +253,7 @@ public class ShopeeApiManager {
         requestBody.setTimestamp(System.currentTimeMillis() / 1000);
         // TODO: 2018/9/10 apiUrl需要改成通过获取注解的方式
         String apiUrl = serverBaseUrl + "shop/get_partner_shop";
-        Gson gson = new Gson();
+        Gson gson = RetrofitManager.getGson();
         String bodyJson = gson.toJson(requestBody);
         String authorization = EncryptUtils.sha256_HMAC(apiUrl + "|" + bodyJson, key);
         Call<GetShopsByPartnerResponse> call = shopRequest.getShopsByPartner(authorization, requestBody);

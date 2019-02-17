@@ -65,6 +65,18 @@ public class RetrofitManager {
 //                .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(8888))) // 设置代理
                 .build();
 
+        Gson gson = getGson();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(serverUrl)
+                .addConverterFactory(NobodyConverterFactory.create())
+                .addConverterFactory(new EmptyJsonLenientConverterFactory(GsonConverterFactory.create(gson)))
+                .client(okHttpClient)
+                .build();
+        return retrofit;
+    }
+
+    public static Gson getGson() {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Double.class, new DoubleDefault0Adapter())
                 .registerTypeAdapter(double.class, new DoubleDefault0Adapter())
@@ -75,16 +87,9 @@ public class RetrofitManager {
                 .registerTypeAdapter(Timestamp.class, (JsonDeserializer<Timestamp>) (json, typeOfT, context) -> new Timestamp(json.getAsJsonPrimitive().getAsLong()))
                 .registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (json, typeOfT, context) -> new Date(json.getAsJsonPrimitive().getAsLong()))
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                .serializeNulls()
+//                .serializeNulls()
                 .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(serverUrl)
-                .addConverterFactory(NobodyConverterFactory.create())
-                .addConverterFactory(new EmptyJsonLenientConverterFactory(GsonConverterFactory.create(gson)))
-                .client(okHttpClient)
-                .build();
-        return retrofit;
+        return gson;
     }
 
     public Retrofit resetUrl(Retrofit retrofit, String serviceUrl) {
