@@ -105,4 +105,22 @@ public interface ShopeeOrderService {
      * @return
      */
     Set<ShopeeOrderInfo> getByPurchaseOrderInfoThirdPartyOrderId(String thirdPartyOrderId);
+
+    /**
+     * 更新数据库中已有订单的订单状态
+     *
+     * @param orderSn     订单sn
+     * @param orderStatus 订单状态
+     * @return true-修改成功/false-订单不存在或者失败
+     */
+    boolean updateOrderStatus(String orderSn, String orderStatus);
+
+    /**
+     * 更新数据库中已有订单的shopee平台快递单号
+     *
+     * @param orderSn    订单sn
+     * @param trackingNo shopee平台快递单号
+     * @return
+     */
+    boolean updateOrderTrackingNo(String orderSn, String trackingNo);
 }

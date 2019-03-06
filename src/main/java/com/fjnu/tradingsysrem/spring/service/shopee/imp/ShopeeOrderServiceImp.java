@@ -266,4 +266,28 @@ public class ShopeeOrderServiceImp implements ShopeeOrderService {
         return lazadaOrderInfoSet;
     }
 
+    @Override
+    @Transactional
+    public boolean updateOrderStatus(String orderSn, String orderStatus) {
+        ShopeeOrderInfo shopeeOrderInfo = shopeeOrderInfoDao.findByOrderSn(orderSn);
+        if (shopeeOrderInfo != null) {
+            shopeeOrderInfo.setOrderStatus(orderStatus);
+            shopeeOrderInfoDao.saveAndFlush(shopeeOrderInfo);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    @Transactional
+    public boolean updateOrderTrackingNo(String orderSn, String trackingNo) {
+        ShopeeOrderInfo shopeeOrderInfo = shopeeOrderInfoDao.findByOrderSn(orderSn);
+        if (shopeeOrderInfo != null) {
+            shopeeOrderInfo.setTrackingNo(trackingNo);
+            shopeeOrderInfoDao.saveAndFlush(shopeeOrderInfo);
+            return true;
+        }
+        return false;
+    }
+
 }
