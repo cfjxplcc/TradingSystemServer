@@ -44,4 +44,5 @@ public interface LazadaOrderInfoDao {
     List<LazadaOrderInfo> findAllByLazadaShopInfoEmailAndCreateTimeBetweenOrderByLazadaShopInfoAscCreateTimeDesc(String email
             , java.sql.Timestamp beginTime, java.sql.Timestamp endTime);
 
+    List<LazadaOrderInfo> findAllByOrderNumberOrderByCreateTimeDesc(long orderNumber);
 }

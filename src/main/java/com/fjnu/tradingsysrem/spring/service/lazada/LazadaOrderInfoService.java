@@ -46,4 +46,8 @@ public interface LazadaOrderInfoService {
     List<LazadaOrderInfo> getOrderDeliveryStatusIsFalse();
 
     List<LazadaOrderInfo> getByEmail(String email, String orderStatus, String beginTime, String endTime);
+
+    List<LazadaOrderInfo> getByOrderNumber(long orderNumber);
+
+    Set<LazadaOrderInfo> getByItemSkuAndDeliveryIsFalse(String sku);
 }

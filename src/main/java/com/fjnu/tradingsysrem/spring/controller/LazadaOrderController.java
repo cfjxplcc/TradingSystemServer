@@ -176,4 +176,25 @@ public class LazadaOrderController {
         return ResponseEntity.ok().body(lazadaOrderInfoService.getByEmail(email, orderStatus, beginTime, endTime));
     }
 
+    /**
+     * 根据订单平台订单号查询
+     *
+     * @param orderNumber 订单号
+     * @return
+     */
+    @GetMapping("/lazada/order/get_by_order_number")
+    public ResponseEntity<List<LazadaOrderInfo>> getByOrderNumber(@RequestParam("order_number") long orderNumber) {
+        return ResponseEntity.ok().body(lazadaOrderInfoService.getByOrderNumber(orderNumber));
+    }
+
+    /**
+     * 根据订单商品sku查询未出货的订单数据
+     *
+     * @param sku 商品sku
+     * @return
+     */
+    @GetMapping("/lazada/order/get_by_order_item_sku_and_delivery_is_false")
+    public ResponseEntity<Set<LazadaOrderInfo>> getByItemSkuAndDeliveryIsFalse(@RequestParam("sku") String sku) {
+        return ResponseEntity.ok().body(lazadaOrderInfoService.getByItemSkuAndDeliveryIsFalse(sku));
+    }
 }

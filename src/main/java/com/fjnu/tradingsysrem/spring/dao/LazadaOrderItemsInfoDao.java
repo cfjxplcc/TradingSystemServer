@@ -20,6 +20,8 @@ public interface LazadaOrderItemsInfoDao {
 
     List<LazadaOrderItemsInfo> findAllByLazadaOrderInfo(LazadaOrderInfo lazadaOrderInfo);
 
+    List<LazadaOrderItemsInfo> findAllBySkuAndLazadaOrderInfoDeliveryIsFalseOrderByCreatedTimeDesc(String sku);
+
     LazadaOrderItemsInfo findById(String id);
 
     LazadaOrderItemsInfo findByLazadaOrderItemId(Long lazadaOrderItemId);

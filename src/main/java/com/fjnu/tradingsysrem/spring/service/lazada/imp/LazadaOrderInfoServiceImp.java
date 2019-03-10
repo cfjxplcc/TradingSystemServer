@@ -368,4 +368,20 @@ public class LazadaOrderInfoServiceImp implements LazadaOrderInfoService {
         }
     }
 
+    @Override
+    public List<LazadaOrderInfo> getByOrderNumber(long orderNumber) {
+        return lazadaOrderInfoDao.findAllByOrderNumberOrderByCreateTimeDesc(orderNumber);
+    }
+
+    @Override
+    public Set<LazadaOrderInfo> getByItemSkuAndDeliveryIsFalse(String sku) {
+        Set<LazadaOrderInfo> lazadaOrderInfoSet = new HashSet<>();
+
+        List<LazadaOrderItemsInfo> lazadaOrderItemsInfoList = lazadaOrderItemsInfoDao.findAllBySkuAndLazadaOrderInfoDeliveryIsFalseOrderByCreatedTimeDesc(sku);
+        for (LazadaOrderItemsInfo lazadaOrderItemsInfo : lazadaOrderItemsInfoList) {
+            lazadaOrderInfoSet.add(lazadaOrderItemsInfo.getLazadaOrderInfo());
+        }
+
+        return lazadaOrderInfoSet;
+    }
 }
