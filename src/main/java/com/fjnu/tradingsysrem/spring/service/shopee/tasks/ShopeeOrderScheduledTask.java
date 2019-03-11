@@ -21,7 +21,6 @@ public class ShopeeOrderScheduledTask {
     @Autowired
     private ShopeeShopService shopeeShopService;
 
-
     /**
      * 获取过去6小时内的新订单
      */

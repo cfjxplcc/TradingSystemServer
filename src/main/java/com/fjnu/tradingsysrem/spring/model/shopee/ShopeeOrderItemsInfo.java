@@ -1,6 +1,7 @@
 package com.fjnu.tradingsysrem.spring.model.shopee;
 
 import com.fjnu.tradingsysrem.shopee.response.orders.GetOrderDetailsResponse;
+import com.fjnu.tradingsysrem.spring.utils.EmojiConverterUtil;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -58,7 +59,7 @@ public class ShopeeOrderItemsInfo {
     public ShopeeOrderItemsInfo(ShopeeOrderInfo shopeeOrderInfo, GetOrderDetailsResponse.Item item) {
         this.shopeeOrderInfo = shopeeOrderInfo;
         itemId = item.getItem_id();
-        itemName = item.getItem_name();
+        itemName = EmojiConverterUtil.emojiConvert(item.getItem_name());
         itemSku = item.getItem_sku();
         variationId = item.getVariation_id();
         variationName = item.getVariation_name();

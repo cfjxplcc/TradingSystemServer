@@ -21,4 +21,6 @@ public interface ShopeeOrderItemsInfoDao {
     List<ShopeeOrderItemsInfo> findAllByShopeeOrderInfo(ShopeeOrderInfo shopeeOrderInfo);
 
     void deleteById(String id);
+
+    List<ShopeeOrderItemsInfo> findAllByItemSkuAndShopeeOrderInfoDeliveryIsFalseOrderByShopeeOrderInfoCreateTimeDesc(String sku);
 }

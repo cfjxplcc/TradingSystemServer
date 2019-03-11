@@ -142,7 +142,7 @@ public class ShopeeApiManager {
         if (pageIndex < 0) {
             pageIndex = 0;
         }
-        requestBody.setPagination_offset(pageIndex);
+        requestBody.setPagination_offset(pageIndex * requestBody.getPagination_entries_per_page());
         // TODO: 2018/9/10 apiUrl需要改成通过获取注解的方式
         String apiUrl = serverBaseUrl + "orders/basics";
         Gson gson = RetrofitManager.getGson();

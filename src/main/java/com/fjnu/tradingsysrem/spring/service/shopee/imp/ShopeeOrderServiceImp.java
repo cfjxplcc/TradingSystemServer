@@ -109,7 +109,7 @@ public class ShopeeOrderServiceImp implements ShopeeOrderService {
             orderSnList.add(orderList.get(i).getOrdersn());
             count++;
             // 最多一次请求50个订单数据，每次请求进行3次尝试
-            if (count == 50 || i == orderList.size() - 1) {
+            if (count % 50 == 0 || i == orderList.size() - 1) {
                 tryCount = 0;
                 isRequestSuccessful = false;
                 while (tryCount < 3 && !isRequestSuccessful) {
@@ -290,4 +290,24 @@ public class ShopeeOrderServiceImp implements ShopeeOrderService {
         return false;
     }
 
+    @Override
+    @Transactional
+    public void synchShopeeOrderInfoFromPlatformByCreateTime(long beginTime, long endTime) {
+        List<ShopeeShopInfo> shopeeShopInfoList = shopeeShopInfoDao.findAll();
+        for (ShopeeShopInfo shopeeShopInfo : shopeeShopInfoList) {
+            if (shopeeShopInfo.isAuthorizationFlag()) {
+                synchShopeeOrderInfoFromPlatformByCreateTime(shopeeShopInfo, beginTime, endTime);
+            }
+        }
+    }
+
+    @Override
+    public Set<ShopeeOrderInfo> getByItemSkuAndDeliveryIsFalse(String sku) {
+        Set<ShopeeOrderInfo> shopeeOrderInfoSet = new HashSet<>();
+        List<ShopeeOrderItemsInfo> shopeeOrderItemsInfoList = shopeeOrderItemsInfoDao.findAllByItemSkuAndShopeeOrderInfoDeliveryIsFalseOrderByShopeeOrderInfoCreateTimeDesc(sku);
+        for (ShopeeOrderItemsInfo shopeeOrderItemsInfo : shopeeOrderItemsInfoList) {
+            shopeeOrderInfoSet.add(shopeeOrderItemsInfo.getShopeeOrderInfo());
+        }
+        return shopeeOrderInfoSet;
+    }
 }

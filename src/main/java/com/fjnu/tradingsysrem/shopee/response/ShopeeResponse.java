@@ -40,10 +40,10 @@ public class ShopeeResponse<T extends ShopeeBaseResponse> {
             if (response.body() == null) {
                 errorMsg = "Error:response.body in null !!!";
             } else {
-                errorMsg = "RequestId:" + response.body().getRequest_id() + " ; Error:" + response.body().getError();
+                errorMsg = "ResponseClass:" + response.body().getClass().getSimpleName()
+                        + " | RequestId:" + response.body().getRequest_id() + " ; Error:" + response.body().getError();
             }
         }
         return errorMsg;
     }
-
 }

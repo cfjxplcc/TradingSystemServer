@@ -123,4 +123,15 @@ public interface ShopeeOrderService {
      * @return
      */
     boolean updateOrderTrackingNo(String orderSn, String trackingNo);
+
+    /**
+     * 根据订单商品sku查询未出货的订单数据
+     *
+     * @param sku 商品sku
+     * @return
+     */
+    Set<ShopeeOrderInfo> getByItemSkuAndDeliveryIsFalse(String sku);
+
+    void synchShopeeOrderInfoFromPlatformByCreateTime(long beginTime, long endTime);
+
 }
