@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fjnu.tradingsysrem.shopee.response.orders.GetOrderDetailsResponse;
 import com.fjnu.tradingsysrem.spring.model.ExchangeRate;
+import com.fjnu.tradingsysrem.spring.utils.EmojiConverterUtil;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -136,7 +137,9 @@ public class ShopeeOrderInfo {
         orderStatus = orders.getOrder_status();
         shippingCarrier = orders.getShipping_carrier();
         paymentMethod = orders.getPayment_method();
-        messageToSeller = orders.getMessage_to_seller();
+        if (orders.getMessage_to_seller() != null) {
+            messageToSeller = EmojiConverterUtil.emojiConvert(orders.getMessage_to_seller());
+        }
         note = orders.getNote();
         noteUpdateTime = orders.getNote_update_time();
         createTime = new Timestamp(orders.getCreate_time() * 1000);
