@@ -6,7 +6,7 @@
 
     <groupId>com.fjnu.tradingsystem</groupId>
     <artifactId>TradingSystemServer</artifactId>
-    <version>3.0.1</version>
+    <version>3.0.2</version>
     <packaging>war</packaging>
     <properties>
         <failOnMissingWebXml>false</failOnMissingWebXml>
