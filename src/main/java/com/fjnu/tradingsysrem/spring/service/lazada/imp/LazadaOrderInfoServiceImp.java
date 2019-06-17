@@ -12,6 +12,8 @@ import com.fjnu.tradingsysrem.spring.service.lazada.LazadaOrderInfoService;
 import com.fjnu.tradingsysrem.spring.utils.DateUtils;
 import com.fjnu.tradingsysrem.spring.utils.TextUtils;
 import com.lazada.lazop.util.ApiException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,7 @@ import java.util.*;
 @Service
 @Transactional(readOnly = true)
 public class LazadaOrderInfoServiceImp implements LazadaOrderInfoService {
+    private static Logger logger = LoggerFactory.getLogger(LazadaOrderInfoServiceImp.class);
 
     @Autowired
     private LazadaOrderInfoDao lazadaOrderInfoDao;
@@ -124,7 +127,8 @@ public class LazadaOrderInfoServiceImp implements LazadaOrderInfoService {
             List<ShipmentProviderBean> shipmentProviders = lazadaApiManager.getShipmentProviders(lazadaShopInfo);
             return shipmentProviders;
         } catch (ApiException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
+            ;
             return new ArrayList<>();
         }
     }
@@ -153,10 +157,10 @@ public class LazadaOrderInfoServiceImp implements LazadaOrderInfoService {
                 lazadaOrderInfo.setOrderStatus(OrderBean.Status.RTS.getStatus());
                 lazadaOrderInfoDao.saveAndFlush(lazadaOrderInfo);
             }
-            System.out.println("setStatusToReadyToShip_result:" + result);
+            logger.info("setStatusToReadyToShip_result:" + result);
             return result;
         } catch (ApiException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return e.toString();
         }
     }
@@ -164,25 +168,25 @@ public class LazadaOrderInfoServiceImp implements LazadaOrderInfoService {
     @Override
     @Transactional
     public void manualSyncLazadaOrderInfo(String beginTime, String endTime) {
-        System.out.println("-------------> manualSyncLazadaOrderInfo task begin <-------------");
+        logger.info("-------------> manualSyncLazadaOrderInfo task begin <-------------");
         long methodBeginTime = System.currentTimeMillis();
 
-        System.out.println("开始时间：" + beginTime);
-        System.out.println("结束时间：" + endTime);
+        logger.info("开始时间：" + beginTime);
+        logger.info("结束时间：" + endTime);
 
         syncLazadaOrderInfo(beginTime, endTime);
 
         long methodEndTime = System.currentTimeMillis();
-        System.out.println("manualSyncLazadaOrderInfo cost time " + (methodEndTime - methodBeginTime) / 1000 + " second");
+        logger.info("manualSyncLazadaOrderInfo cost time " + (methodEndTime - methodBeginTime) / 1000 + " second");
     }
 
     @Override
     @Transactional
     public LazadaOrderInfo syncLazadaOrderInfo(String orderId) {
-        System.out.println("-------------> syncLazadaOrderInfo task begin <-------------");
+        logger.info("-------------> syncLazadaOrderInfo task begin <-------------");
         LazadaOrderInfo lazadaOrderInfo = lazadaOrderInfoDao.findById(orderId);
         if (null == lazadaOrderInfo) {
-            System.out.println("syncLazadaOrderInfo:null == lazadaOrderInfo");
+            logger.info("syncLazadaOrderInfo:null == lazadaOrderInfo");
             return null;
         }
         LazadaShopInfo shopInfo = lazadaOrderInfo.getLazadaShopInfo();
@@ -190,7 +194,7 @@ public class LazadaOrderInfoServiceImp implements LazadaOrderInfoService {
         try {
             OrderBean orderBean = LazadaApiManager.getInstance().getOrder(shopInfo, lazadaOrderId);
             if (null == orderBean) {
-                System.out.println("syncLazadaOrderInfo:null == orderBean");
+                logger.info("syncLazadaOrderInfo:null == orderBean");
                 return null;
             }
             lazadaOrderInfo.setOrderStatus(orderBean.getStatuses().get(0));
@@ -199,7 +203,8 @@ public class LazadaOrderInfoServiceImp implements LazadaOrderInfoService {
                 try {
                     lazadaOrderInfo.setLastUpdateTime(DateUtils.lazadaResponseDateStrToSqlDate(orderBean.getUpdated_at()));
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage(), e);
+                    ;
                 }
             }
             lazadaOrderInfoDao.saveAndFlush(lazadaOrderInfo);
@@ -215,7 +220,8 @@ public class LazadaOrderInfoServiceImp implements LazadaOrderInfoService {
                 }
             }
         } catch (ApiException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
+            ;
         }
 
         return lazadaOrderInfo;
@@ -247,22 +253,23 @@ public class LazadaOrderInfoServiceImp implements LazadaOrderInfoService {
             beginTime = DateUtils.dateToISO8601DateFormatStr(simpleDateFormat.parse(beginTime).getTime());
             endTime = DateUtils.dateToISO8601DateFormatStr(simpleDateFormat.parse(endTime).getTime());
         } catch (ParseException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
+            ;
             return;
         }
 
         List<LazadaShopInfo> lazadaShopInfoList = lazadaShopInfoDao.findAllByOrderByShopNameAsc();
         for (LazadaShopInfo lazadaShopInfo : lazadaShopInfoList) {
             if (TextUtils.isEmpty(lazadaShopInfo.getAccessToken())) {
-                System.out.println("店铺id：" + lazadaShopInfo.getId() + " 店铺名称：" + lazadaShopInfo.getShopName() + " 未含有AccessToken");
+                logger.info("店铺id：" + lazadaShopInfo.getId() + " 店铺名称：" + lazadaShopInfo.getShopName() + " 未含有AccessToken");
                 continue;
             }
-            System.out.println("初始化商店API(店铺id：" + lazadaShopInfo.getId() + " | 店铺名称：" + lazadaShopInfo.getShopName());
+            logger.info("初始化商店API(店铺id：" + lazadaShopInfo.getId() + " | 店铺名称：" + lazadaShopInfo.getShopName());
             lazadaApiManager.initClient(lazadaShopInfo);
 
             try {
                 List<OrderBean> orderList = lazadaApiManager.getOrders(null, beginTime, endTime);
-                System.out.println("店铺id：" + lazadaShopInfo.getId() + " 获取全部状态的订单总数为" + orderList.size());
+                logger.info("店铺id：" + lazadaShopInfo.getId() + " 获取全部状态的订单总数为" + orderList.size());
                 for (OrderBean order : orderList) {
                     //先从数据库中根据lazada平台的orderId查询是否数据库中包含该数据
                     LazadaOrderInfo lazadaOrderInfo = lazadaOrderInfoDao.findByLazadaOrderId(order.getOrder_id());
@@ -274,7 +281,8 @@ public class LazadaOrderInfoServiceImp implements LazadaOrderInfoService {
                             try {
                                 lazadaOrderInfo.setLastUpdateTime(DateUtils.lazadaResponseDateStrToSqlDate(order.getUpdated_at()));
                             } catch (ParseException e) {
-                                e.printStackTrace();
+                                logger.error(e.getMessage(), e);
+                                ;
                             }
                         }
                         if (lazadaOrderInfo.getExchangeRate() == null) {
@@ -306,7 +314,8 @@ public class LazadaOrderInfoServiceImp implements LazadaOrderInfoService {
                     }
                 }
             } catch (ApiException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
+                ;
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e1) {

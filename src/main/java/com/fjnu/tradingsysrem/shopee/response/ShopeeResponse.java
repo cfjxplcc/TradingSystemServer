@@ -1,5 +1,7 @@
 package com.fjnu.tradingsysrem.shopee.response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import retrofit2.Response;
 
 import java.io.IOException;
@@ -8,6 +10,7 @@ import java.io.IOException;
  * Created by luochunchen on 2018/12/28.
  */
 public class ShopeeResponse<T extends ShopeeBaseResponse> {
+    private static Logger logger = LoggerFactory.getLogger(ShopeeResponse.class);
 
     private final Response<T> response;
 
@@ -24,7 +27,7 @@ public class ShopeeResponse<T extends ShopeeBaseResponse> {
     }
 
     public void printError() {
-        System.out.println(getErrorMsg());
+        logger.info(getErrorMsg());
     }
 
     public String getErrorMsg() {

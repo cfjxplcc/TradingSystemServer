@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fjnu.tradingsysrem.spring.service.shopee.ShopeeOrderService;
 import com.fjnu.tradingsysrem.spring.service.shopee.ShopeeShopService;
 import com.fjnu.tradingsysrem.spring.utils.TextUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("shopee/receive_push_mechanism/")
 public class ShopeeReceivePushMechanismController {
+    private static Logger logger = LoggerFactory.getLogger(ShopeeReceivePushMechanismController.class);
+
     @Autowired
     private ShopeeShopService shopeeShopService;
     @Autowired
@@ -24,9 +28,9 @@ public class ShopeeReceivePushMechanismController {
 
     @PostMapping(headers = {"Content-Type=application/json"})
     public ResponseEntity receivePushMechanism(@RequestHeader("Authorization") String authorization, @RequestBody Object requestBody) {
-        System.out.println("Authorization:" + authorization);
+        logger.info("Authorization:" + authorization);
         String bodyString = JSON.toJSONString(requestBody);
-        System.out.println("RequestBody:" + bodyString);
+        logger.info("RequestBody:" + bodyString);
 
         // TODO: 2019/3/6 验证Authorization
 
@@ -53,7 +57,7 @@ public class ShopeeReceivePushMechanismController {
                 orderSn = ((JSONObject) pushMechanismData.getData()).getString("ordersn");
                 String status = ((JSONObject) pushMechanismData.getData()).getString("status");
                 if (TextUtils.isEmpty(orderSn) || TextUtils.isEmpty(status)) {
-                    System.out.println("error:orderSn==null||status==null");
+                    logger.info("error:orderSn==null||status==null");
                     break;
                 }
                 shopeeOrderService.updateOrderStatus(orderSn, status);
@@ -63,7 +67,7 @@ public class ShopeeReceivePushMechanismController {
                 orderSn = ((JSONObject) pushMechanismData.getData()).getString("ordersn");
                 String trackingNo = ((JSONObject) pushMechanismData.getData()).getString("trackingno");
                 if (TextUtils.isEmpty(orderSn) || TextUtils.isEmpty(trackingNo)) {
-                    System.out.println("error:orderSn==null||trackingNo==null");
+                    logger.info("error:orderSn==null||trackingNo==null");
                     break;
                 }
                 shopeeOrderService.updateOrderTrackingNo(orderSn, trackingNo);

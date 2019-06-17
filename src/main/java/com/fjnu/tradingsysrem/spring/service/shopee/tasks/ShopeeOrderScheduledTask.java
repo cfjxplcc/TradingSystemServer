@@ -3,6 +3,8 @@ package com.fjnu.tradingsysrem.spring.service.shopee.tasks;
 import com.fjnu.tradingsysrem.spring.model.shopee.ShopeeShopInfo;
 import com.fjnu.tradingsysrem.spring.service.shopee.ShopeeOrderService;
 import com.fjnu.tradingsysrem.spring.service.shopee.ShopeeShopService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,7 @@ import java.util.List;
  */
 @Component
 public class ShopeeOrderScheduledTask {
+    private static Logger logger = LoggerFactory.getLogger(ShopeeOrderScheduledTask.class);
 
     @Autowired
     private ShopeeOrderService shopeeOrderService;
@@ -27,7 +30,7 @@ public class ShopeeOrderScheduledTask {
     @Scheduled(cron = "0 0 0/6 * * *")//每6小时执行一次
 //    @Scheduled(fixedRate = 60 * 60 * 1000)//每间隔1小时执行一次
     public void asyncNewShopeeOrderInfo() {
-        System.out.println("-------------> asyncNewShopeeOrderInfo task begin <-------------");
+        logger.info("-------------> asyncNewShopeeOrderInfo task begin <-------------");
         long methodBeginTime = System.currentTimeMillis();
 
         Calendar calendar = Calendar.getInstance();

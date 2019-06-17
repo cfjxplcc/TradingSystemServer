@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.fjnu.tradingsystem</groupId>
-    <artifactId>TradingSystemServer</artifactId>
-    <version>3.0.2</version>
+    <artifactId>server</artifactId>
+    <version>3.1.0</version>
     <packaging>war</packaging>
     <properties>
         <failOnMissingWebXml>false</failOnMissingWebXml>
@@ -16,7 +16,6 @@
     </properties>
 
     <dependencies>
-
         <!-- Spring MVC Dependency -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -103,6 +102,26 @@
             <version>3.17</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/log4j/log4j -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+
         <!-- Servlet Dependency -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -138,11 +157,10 @@
             <artifactId>converter-gson</artifactId>
             <version>2.4.0</version>
         </dependency>
-
-
     </dependencies>
 
     <build>
+        <finalName>trading_system_server</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

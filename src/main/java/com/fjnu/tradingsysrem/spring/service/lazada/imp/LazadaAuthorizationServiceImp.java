@@ -10,6 +10,8 @@ import com.fjnu.tradingsysrem.spring.utils.DateUtils;
 import com.fjnu.tradingsysrem.spring.utils.TextUtils;
 import com.lazada.lazop.api.LazopResponse;
 import com.lazada.lazop.util.ApiException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,7 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class LazadaAuthorizationServiceImp implements LazadaAuthorizationService {
+    private static Logger logger = LoggerFactory.getLogger(LazadaAuthorizationServiceImp.class);
 
     @Autowired
     private LazadaShopInfoDao lazadaShopInfoDao;
@@ -33,13 +36,13 @@ public class LazadaAuthorizationServiceImp implements LazadaAuthorizationService
     @Transactional
     public String generateAccessToken(String code) {
         if (TextUtils.isEmpty(code)) {
-            System.out.println("Error:Code is empty");
+            logger.info("Error:Code is empty");
             return "Error:Code is empty";
         }
 
         try {
             LazopResponse response = LazadaApiManager.getInstance().generateAccessToken(code);
-            System.out.println(response.getBody());
+            logger.info(response.getBody());
             if (response.getCode().equals("0")) {
                 AccessTokenBean accessTokenBean = JSON.parseObject(response.getBody(), AccessTokenBean.class);
                 String accessToken = accessTokenBean.getAccess_token();
@@ -59,7 +62,7 @@ public class LazadaAuthorizationServiceImp implements LazadaAuthorizationService
                         List<LazadaShopInfo> lazadaShopInfoList = lazadaShopInfoDao.findAllByEmailAndCountryCode(acount, countryUserInfoBean.getCountry());
                         if (lazadaShopInfoList.size() > 1) {
                             //当前版本一个账户在一个国家只能有一个账户,不考虑一个账户在一个国家有多个账户的情况
-                            System.out.println("Error:Acount(" + acount + ") countryCode(" + countryUserInfoBean.getCountry() + ") size is wrong!!!");
+                            logger.info("Error:Acount(" + acount + ") countryCode(" + countryUserInfoBean.getCountry() + ") size is wrong!!!");
                             continue;
                         } else if (lazadaShopInfoList.isEmpty()) {
                             //添加新的店铺数据
@@ -98,8 +101,8 @@ public class LazadaAuthorizationServiceImp implements LazadaAuthorizationService
                 return response.getBody();
             }
         } catch (ApiException e) {
-            e.printStackTrace();
-            System.out.println(e.toString());
+            logger.error(e.getMessage(), e);
+            logger.info(e.toString());
             return "Error:" + e.toString();
         }
     }
@@ -107,10 +110,10 @@ public class LazadaAuthorizationServiceImp implements LazadaAuthorizationService
     @Override
     @Transactional
     public void refreshAccessToken() {
-        System.out.println("----------------- RefreshAccessToken begin -------------------");
+        logger.info("----------------- RefreshAccessToken begin -------------------");
         List<LazadaShopInfo> lazadaShopInfoList = lazadaShopInfoDao.findAllByOrderByEmail();
         long currentTime = System.currentTimeMillis();
-        System.out.println("currentTime:" + DateUtils.dateToStr(new Date(currentTime), "yyyy-MM-dd HH:mm:ss"));
+        logger.info("currentTime:" + DateUtils.dateToStr(new Date(currentTime), "yyyy-MM-dd HH:mm:ss"));
         Calendar now = Calendar.getInstance();
         now.setTime(new Date(currentTime));
 
@@ -164,11 +167,10 @@ public class LazadaAuthorizationServiceImp implements LazadaAuthorizationService
                                 }
                             }
                         } else {
-                            System.out.println("Error:RefreshAccessToken " + accessTokenBean.getMessage());
+                            logger.info("Error:RefreshAccessToken " + accessTokenBean.getMessage());
                         }
                     } catch (ApiException e) {
-                        e.printStackTrace();
-                        continue;
+                        logger.error(e.getMessage(), e);
                     }
                 }
             }
@@ -179,7 +181,7 @@ public class LazadaAuthorizationServiceImp implements LazadaAuthorizationService
         }
 
         long methodEndTime = System.currentTimeMillis();
-        System.out.println("----------------------- refreshAccessToken cost time "
+        logger.info("----------------------- refreshAccessToken cost time "
                 + (methodEndTime - currentTime) / 1000 + " second -----------------");
     }
 }

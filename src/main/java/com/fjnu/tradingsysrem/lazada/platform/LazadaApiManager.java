@@ -12,6 +12,9 @@ import com.lazada.lazop.api.LazopRequest;
 import com.lazada.lazop.api.LazopResponse;
 import com.lazada.lazop.util.ApiException;
 import com.lazada.lazop.util.UrlConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,11 +26,15 @@ import java.util.*;
  * Created by LCC on 2017/10/31.
  */
 public class LazadaApiManager {
+    private static Logger logger = LoggerFactory.getLogger(LazadaApiManager.class);
 
     /** Lazada 应用密码properties的key */
     private static final String PROPERTIES_APP_KEY_NAME = "lazada.app_key";
     private static final String PROPERTIES_APP_SECRET_NAME = "lazada.app_secret";
     private static final String PROPERTIES_APP_CALLBACK_URL = "lazada.app_callback_url";
+
+    /** 是否使用http代理 */
+    private static final boolean IS_USE_HTTP_PROXY = false;
 
     private String appKey = "";
     private String appSecret = "";
@@ -68,7 +75,7 @@ public class LazadaApiManager {
 //        System.setProperty("https.proxyPort", "1080");
     }
 
-    public static final LazadaApiManager getInstance() {
+    public static LazadaApiManager getInstance() {
         return InstanceHolder.instance;
     }
 
@@ -83,8 +90,9 @@ public class LazadaApiManager {
         client = new LazopClient(lazadaShopInfo.getApiUrl(), appKey, appSecret);
         client.setConnectTimeout(30);
         client.setReadTimeout(60);
-        // 使用代理访问境外服务器
-        client.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(1080)));
+        if (IS_USE_HTTP_PROXY) {
+            setLazopClientClientHttpProxy(client);
+        }
         access_token = lazadaShopInfo.getAccessToken();
     }
 
@@ -96,7 +104,7 @@ public class LazadaApiManager {
      * @throws ApiException
      */
     public List<OrderBean> getOrders(OrderBean.Status status, String beginTime, String endTime) throws ApiException {
-        System.out.println("getOrders(status:" + status + " , beginTime:" + beginTime + " , endTime:" + endTime + ")");
+        logger.info("getOrders(status:" + status + " , beginTime:" + beginTime + " , endTime:" + endTime + ")");
 
         LazopRequest request = new LazopRequest();
         request.setApiName("/orders/get");
@@ -111,18 +119,19 @@ public class LazadaApiManager {
         LazopResponse response = client.execute(request, access_token);
         if (response.getCode().equals("0")) {
             GetOrdersResponse getOrdersResponse = JSON.parseObject(response.getBody(), GetOrdersResponse.class);
-            //        System.out.println(response.getBody());
+            logger.debug(response.getBody());
             return getOrdersResponse.getData().getOrders();
         } else {
-            System.out.println(response.getBody());
+            logger.info(response.getBody());
             return new ArrayList<>();
         }
     }
 
     public OrderBean getOrder(LazadaShopInfo lazadaShopInfo, Long orderId) throws ApiException {
         LazopClient client = new LazopClient(lazadaShopInfo.getApiUrl(), appKey, appSecret);
-        // 使用代理访问境外服务器
-        client.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(1080)));
+        if (IS_USE_HTTP_PROXY) {
+            setLazopClientClientHttpProxy(client);
+        }
         LazopRequest request = new LazopRequest();
         request.setApiName("/order/get");
         request.setHttpMethod("GET");
@@ -133,7 +142,7 @@ public class LazadaApiManager {
             GetOrderResponse getOrderResponse = JSON.parseObject(response.getBody(), GetOrderResponse.class);
             return getOrderResponse.getData();
         } else {
-            System.out.println(response.getBody());
+            logger.info(response.getBody());
             return null;
         }
     }
@@ -153,8 +162,9 @@ public class LazadaApiManager {
 
     public List<OrderItemBean> getOrderItems(LazadaShopInfo lazadaShopInfo, Long orderId) throws ApiException {
         LazopClient client = new LazopClient(lazadaShopInfo.getApiUrl(), appKey, appSecret);
-        // 使用代理访问境外服务器
-        client.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(1080)));
+        if (IS_USE_HTTP_PROXY) {
+            setLazopClientClientHttpProxy(client);
+        }
         LazopRequest request = new LazopRequest();
         request.setApiName("/order/items/get");
         request.setHttpMethod("GET");
@@ -165,7 +175,7 @@ public class LazadaApiManager {
             GetOrderItemsResponse getOrderItemsResponse = JSON.parseObject(response.getBody(), GetOrderItemsResponse.class);
             return getOrderItemsResponse.getData();
         } else {
-            System.out.println(response.getBody());
+            logger.info(response.getBody());
             return new ArrayList<>();
         }
     }
@@ -185,22 +195,23 @@ public class LazadaApiManager {
             GetOrderItemsResponse getOrderItemsResponse = JSON.parseObject(response.getBody(), GetOrderItemsResponse.class);
             return getOrderItemsResponse.getData();
         } else {
-            System.out.println(response.getBody());
+            logger.info(response.getBody());
             return new ArrayList<>();
         }
     }
 
     public List<ShipmentProviderBean> getShipmentProviders(LazadaShopInfo shopInfo) throws ApiException {
-        System.out.println("getShipmentProviders()");
+        logger.info("getShipmentProviders()");
 
         LazopClient client = new LazopClient(shopInfo.getApiUrl(), appKey, appSecret);
-        // 使用代理访问境外服务器
-        client.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(1080)));
+        if (IS_USE_HTTP_PROXY) {
+            setLazopClientClientHttpProxy(client);
+        }
         LazopRequest request = new LazopRequest();
         request.setApiName("/shipment/providers/get");
         request.setHttpMethod("GET");
         LazopResponse response = client.execute(request, shopInfo.getAccessToken());
-        System.out.println(response.getBody());
+        logger.info(response.getBody());
         if (response.getCode().equals("0")) {
             GetShipmentProvidersResponse getShipmentProvidersResponse = JSON.parseObject(response.getBody(), GetShipmentProvidersResponse.class);
             return getShipmentProvidersResponse.getData().getShipment_providers();
@@ -210,7 +221,7 @@ public class LazadaApiManager {
     }
 
     public List<PackedByMarketplaceOrderItemBean> setStatusToPackedByMarketplace(LazadaShopInfo lazadaShopInfo, List<LazadaOrderItemsInfo> lazadaOrderItemsInfoList, String shippingProvider) throws ApiException {
-        System.out.println("setStatusToPackedByMarketplace()");
+        logger.info("setStatusToPackedByMarketplace()");
 
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("[");
@@ -220,11 +231,12 @@ public class LazadaApiManager {
         }
         stringBuffer.deleteCharAt(stringBuffer.length() - 1);
         stringBuffer.append("]");
-        System.out.println(stringBuffer.toString());
+        logger.info(stringBuffer.toString());
 
         LazopClient client = new LazopClient(lazadaShopInfo.getApiUrl(), appKey, appSecret);
-        // 使用代理访问境外服务器
-        client.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(1080)));
+        if (IS_USE_HTTP_PROXY) {
+            setLazopClientClientHttpProxy(client);
+        }
         LazopRequest request = new LazopRequest();
         request.setApiName("/order/pack");
         request.addApiParameter("shipping_provider", shippingProvider);
@@ -232,7 +244,7 @@ public class LazadaApiManager {
         request.addApiParameter("order_item_ids", stringBuffer.toString());
 
         LazopResponse response = client.execute(request, lazadaShopInfo.getAccessToken());
-        System.out.println(response.getBody());
+        logger.info(response.getBody());
         if (response.getCode().equals("0")) {
             SetStatusToPackedByMarketplaceResponse setStatusToPackedByMarketplaceResponse = JSON.parseObject(response.getBody(), SetStatusToPackedByMarketplaceResponse.class);
             return setStatusToPackedByMarketplaceResponse.getData().getOrder_items();
@@ -242,7 +254,7 @@ public class LazadaApiManager {
     }
 
     public String setStatusToReadyToShip(LazadaShopInfo lazadaShopInfo, List<LazadaOrderItemsInfo> lazadaOrderItemsInfoList, String shippingProvider, String trackingNumber) throws ApiException {
-        System.out.println("setStatusToReadyToShip");
+        logger.info("setStatusToReadyToShip");
 
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("[");
@@ -252,11 +264,12 @@ public class LazadaApiManager {
         }
         stringBuffer.deleteCharAt(stringBuffer.length() - 1);
         stringBuffer.append("]");
-        System.out.println(stringBuffer.toString());
+        logger.info(stringBuffer.toString());
 
         LazopClient client = new LazopClient(lazadaShopInfo.getApiUrl(), appKey, appSecret);
-        // 使用代理访问境外服务器
-        client.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(1080)));
+        if (IS_USE_HTTP_PROXY) {
+            setLazopClientClientHttpProxy(client);
+        }
         LazopRequest request = new LazopRequest();
         request.setApiName("/order/rts");
         request.addApiParameter("delivery_type", DeliveryType.Dropship.getType());
@@ -265,26 +278,27 @@ public class LazadaApiManager {
         request.addApiParameter("tracking_number", trackingNumber);
 
         LazopResponse response = client.execute(request, lazadaShopInfo.getAccessToken());
-        System.out.println(response.getBody());
+        logger.info(response.getBody());
         if (response.getCode().equals("0")) {
             SetStatusToPackedByMarketplaceResponse setStatusToPackedByMarketplaceResponse = JSON.parseObject(response.getBody(), SetStatusToPackedByMarketplaceResponse.class);
             if (!setStatusToPackedByMarketplaceResponse.getData().getOrder_items().isEmpty()) {
-                System.out.println("Update status succeed?true");
+                logger.info("Update status succeed?true");
                 return "Update status succeed?true";
             } else {
-                System.out.println("Update status succeed?false");
+                logger.info("Update status succeed?false");
                 return "Update status succeed?false";
             }
         } else {
-            System.out.println("Update status succeed?false");
+            logger.info("Update status succeed?false");
             return "Update status succeed?false";
         }
     }
 
     public LazopResponse generateAccessToken(String code) throws ApiException {
         LazopClient client = new LazopClient(UrlConstants.API_AUTHORIZATION_URL, appKey, appSecret);
-        // 使用代理访问境外服务器
-        client.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(1080)));
+        if (IS_USE_HTTP_PROXY) {
+            setLazopClientClientHttpProxy(client);
+        }
         LazopRequest request = new LazopRequest();
         request.setApiName("/auth/token/create");
         request.addApiParameter("code", code);
@@ -294,13 +308,23 @@ public class LazadaApiManager {
 
     public AccessTokenBean refreshAccessToken(String refreshToken) throws ApiException {
         LazopClient client = new LazopClient(UrlConstants.API_AUTHORIZATION_URL, appKey, appSecret);
-        // 使用代理访问境外服务器
-        client.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(1080)));
+        if (IS_USE_HTTP_PROXY) {
+            setLazopClientClientHttpProxy(client);
+        }
         LazopRequest request = new LazopRequest();
         request.setApiName("/auth/token/refresh");
         request.addApiParameter("refresh_token", refreshToken);
         LazopResponse response = client.execute(request);
         return JSON.parseObject(response.getBody(), AccessTokenBean.class);
+    }
+
+    /**
+     * 设置http访问代理
+     *
+     * @param lazopClient
+     */
+    private void setLazopClientClientHttpProxy(@Nullable LazopClient lazopClient) {
+        lazopClient.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(1080)));
     }
 
     public String getApiUrl(String countryCode) {

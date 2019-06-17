@@ -16,6 +16,8 @@ import com.fjnu.tradingsysrem.spring.model.shopee.ShopeePurchaseOrderInfo;
 import com.fjnu.tradingsysrem.spring.model.shopee.ShopeeShopInfo;
 import com.fjnu.tradingsysrem.spring.service.shopee.ShopeeOrderService;
 import com.fjnu.tradingsysrem.spring.utils.TextUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,7 @@ import java.util.*;
 @Service
 @Transactional(readOnly = true)
 public class ShopeeOrderServiceImp implements ShopeeOrderService {
+    private static Logger logger = LoggerFactory.getLogger(ShopeeOrderServiceImp.class);
 
     @Autowired
     private ShopeeOrderInfoDao shopeeOrderInfoDao;
@@ -48,9 +51,9 @@ public class ShopeeOrderServiceImp implements ShopeeOrderService {
     public void synchShopeeOrderInfoFromPlatformByCreateTime(ShopeeShopInfo shopeeShopInfo, long beginTime, long endTime) {
         // 判断时间是否超过15天
         float totalDays = ((endTime - beginTime) / 1000.0f / 60 / 60 / 24);
-        System.out.println("beginTime:" + beginTime + " ; endTime:" + endTime + " ; totalDays:" + totalDays);
+        logger.info("beginTime:" + beginTime + " ; endTime:" + endTime + " ; totalDays:" + totalDays);
         if (totalDays > 15.0f) {
-            System.out.println("End time is greater than the specified time");
+            logger.info("End time is greater than the specified time");
             endTime = beginTime + 1000 * 60 * 60 * 24 * 15;
         }
 
@@ -80,7 +83,7 @@ public class ShopeeOrderServiceImp implements ShopeeOrderService {
                     isRequestSuccessful = false;
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
                 tryCount++;
                 isRequestSuccessful = false;
             }
@@ -122,7 +125,7 @@ public class ShopeeOrderServiceImp implements ShopeeOrderService {
                             GetOrderDetailsResponse getOrderDetailsResponse = shopeeResponse.getResponseBody();
                             List<String> errors = getOrderDetailsResponse.getErrors();
                             for (String error : errors) {
-                                System.out.println("(getOrderDetails)Orders that encountered error:" + error);
+                                logger.info("(getOrderDetails)Orders that encountered error:" + error);
                             }
 
                             // 保存订单详细数据
@@ -139,10 +142,10 @@ public class ShopeeOrderServiceImp implements ShopeeOrderService {
                                             shopeeOrderItemsInfoDao.save(shopeeOrderItemsInfo);
                                         }
                                     } else {
-                                        System.out.println("订单(" + shopeeOrderInfo.getOrderSn() + ")保存失败!!!");
+                                        logger.info("订单(" + shopeeOrderInfo.getOrderSn() + ")保存失败!!!");
                                     }
                                 } catch (Exception e) {
-                                    e.printStackTrace();
+                                    logger.error(e.getMessage(), e);
                                 }
                             }
                         } else {
@@ -150,7 +153,7 @@ public class ShopeeOrderServiceImp implements ShopeeOrderService {
                             shopeeResponse.printError();
                         }
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        logger.error(e.getMessage(), e);
                     }
                 }
                 orderSnList.clear();

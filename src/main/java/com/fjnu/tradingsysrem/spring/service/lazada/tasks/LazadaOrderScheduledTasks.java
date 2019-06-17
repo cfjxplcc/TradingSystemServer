@@ -72,6 +72,8 @@ import com.fjnu.tradingsysrem.spring.service.lazada.LazadaOrderInfoService;
 import com.fjnu.tradingsysrem.spring.utils.DateUtils;
 import com.fjnu.tradingsysrem.spring.utils.TextUtils;
 import com.lazada.lazop.util.ApiException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -88,6 +90,7 @@ import java.util.List;
  */
 @Component
 public class LazadaOrderScheduledTasks {
+    private static Logger logger = LoggerFactory.getLogger(LazadaOrderScheduledTasks.class);
 
     @Autowired
     private LazadaShopInfoDao lazadaShopInfoDao;
@@ -107,7 +110,7 @@ public class LazadaOrderScheduledTasks {
 //    @Scheduled(fixedRate = 60 * 60 * 1000)//每间隔1小时执行一次
     @Transactional
     public void updatePendingLazadaOrderInfo() {
-        System.out.println("-------------> updatePendingLazadaOrderInfo task begin <-------------");
+        logger.info("-------------> updatePendingLazadaOrderInfo task begin <-------------");
         long methodBeginTime = System.currentTimeMillis();
 
         Calendar calendar = Calendar.getInstance();
@@ -118,22 +121,22 @@ public class LazadaOrderScheduledTasks {
         long endTime = System.currentTimeMillis();
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        System.out.println("一个小时10分钟前的时间：" + df.format(beginTime));
-        System.out.println("当前的时间：" + df.format(endTime));
+        logger.info("一个小时10分钟前的时间：" + df.format(beginTime));
+        logger.info("当前的时间：" + df.format(endTime));
 
         LazadaApiManager lazadaApiManager = LazadaApiManager.getInstance();
 
         List<LazadaShopInfo> lazadaShopInfoList = lazadaShopInfoDao.findAllByOrderByShopNameAsc();
         for (LazadaShopInfo lazadaShopInfo : lazadaShopInfoList) {
             if (TextUtils.isEmpty(lazadaShopInfo.getAccessToken())) {
-                System.out.println("店铺id：" + lazadaShopInfo.getId() + " 店铺名称：" + lazadaShopInfo.getShopName() + " 未含有AccessToken");
+                logger.info("店铺id：" + lazadaShopInfo.getId() + " 店铺名称：" + lazadaShopInfo.getShopName() + " 未含有AccessToken");
                 continue;
             }
             lazadaApiManager.initClient(lazadaShopInfo);
 
             try {
                 List<OrderBean> orderList = lazadaApiManager.getOrders(OrderBean.Status.Pending, beginTime, endTime);
-                System.out.println("店铺id：" + lazadaShopInfo.getId() + " 店铺名称：" + lazadaShopInfo.getShopName() + " 获取到状态为Pending的订单总数为" + orderList.size());
+                logger.info("店铺id：" + lazadaShopInfo.getId() + " 店铺名称：" + lazadaShopInfo.getShopName() + " 获取到状态为Pending的订单总数为" + orderList.size());
                 for (OrderBean order : orderList) {
                     //先从数据库中根据lazada平台的orderId查询是否数据库中包含该数据
                     LazadaOrderInfo lazadaOrderInfo = lazadaOrderInfoDao.findByLazadaOrderId(order.getOrder_id());
@@ -153,18 +156,17 @@ public class LazadaOrderScheduledTasks {
                     }
                 }
             } catch (ApiException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
-                continue;
             }
         }
 
         long methodEndTime = System.currentTimeMillis();
-        System.out.println("updatePendingLazadaOrderInfo cost time " + (methodEndTime - methodBeginTime) / 1000 + " second");
+        logger.info("updatePendingLazadaOrderInfo cost time " + (methodEndTime - methodBeginTime) / 1000 + " second");
     }
 
     /**
@@ -173,7 +175,7 @@ public class LazadaOrderScheduledTasks {
     @Scheduled(cron = "0 0 0/4 * * *")//每4个小时执行一次
     @Transactional
     public void updateAllLazadaOrderInfo() {
-        System.out.println("-------------> updateAllLazadaOrderInfo task begin <-------------");
+        logger.info("-------------> updateAllLazadaOrderInfo task begin <-------------");
         long methodBeginTime = System.currentTimeMillis();
 
         Calendar calendar = Calendar.getInstance();
@@ -184,22 +186,22 @@ public class LazadaOrderScheduledTasks {
         long endTime = System.currentTimeMillis();
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        System.out.println("开始时间：" + df.format(beginTime));
-        System.out.println("结束时间：" + df.format(endTime));
+        logger.info("开始时间：" + df.format(beginTime));
+        logger.info("结束时间：" + df.format(endTime));
 
         LazadaApiManager lazadaApiManager = LazadaApiManager.getInstance();
 
         List<LazadaShopInfo> lazadaShopInfoList = lazadaShopInfoDao.findAllByOrderByShopNameAsc();
         for (LazadaShopInfo lazadaShopInfo : lazadaShopInfoList) {
             if (TextUtils.isEmpty(lazadaShopInfo.getAccessToken())) {
-                System.out.println("店铺id：" + lazadaShopInfo.getId() + " 店铺名称：" + lazadaShopInfo.getShopName() + " 未含有AccessToken");
+                logger.info("店铺id：" + lazadaShopInfo.getId() + " 店铺名称：" + lazadaShopInfo.getShopName() + " 未含有AccessToken");
                 continue;
             }
             lazadaApiManager.initClient(lazadaShopInfo);
 
             try {
                 List<OrderBean> orderList = lazadaApiManager.getOrders(null, beginTime, endTime);
-                System.out.println("店铺id：" + lazadaShopInfo.getId() + " 店铺名称：" + lazadaShopInfo.getShopName() + " 获取全部状态的订单总数为" + orderList.size());
+                logger.info("店铺id：" + lazadaShopInfo.getId() + " 店铺名称：" + lazadaShopInfo.getShopName() + " 获取全部状态的订单总数为" + orderList.size());
                 for (OrderBean order : orderList) {
                     //先从数据库中根据lazada平台的orderId查询是否数据库中包含该数据
                     LazadaOrderInfo lazadaOrderInfo = lazadaOrderInfoDao.findByLazadaOrderId(order.getOrder_id());
@@ -211,7 +213,7 @@ public class LazadaOrderScheduledTasks {
                             try {
                                 lazadaOrderInfo.setLastUpdateTime(DateUtils.lazadaResponseDateStrToSqlDate(order.getUpdated_at()));
                             } catch (ParseException e) {
-                                e.printStackTrace();
+                                logger.error(e.getMessage(), e);
                             }
                         }
                         lazadaOrderInfoDao.saveAndFlush(lazadaOrderInfo);
@@ -231,18 +233,17 @@ public class LazadaOrderScheduledTasks {
                     }
                 }
             } catch (ApiException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
-                continue;
             }
         }
 
         long methodEndTime = System.currentTimeMillis();
-        System.out.println("updateAllLazadaOrderInfo cost time " + (methodEndTime - methodBeginTime) / 1000 + " second");
+        logger.info("updateAllLazadaOrderInfo cost time " + (methodEndTime - methodBeginTime) / 1000 + " second");
     }
 
     /**
@@ -251,7 +252,7 @@ public class LazadaOrderScheduledTasks {
     @Scheduled(cron = "0 30 2 * * *")
     @Transactional
     public void updateOneWeekLazadaOrderInfo() {
-        System.out.println("-------------> updateOneWeekLazadaOrderInfo task begin <-------------");
+        logger.info("-------------> updateOneWeekLazadaOrderInfo task begin <-------------");
 
         long methodBeginTime = System.currentTimeMillis();
 
@@ -263,13 +264,13 @@ public class LazadaOrderScheduledTasks {
         long endTime = System.currentTimeMillis();
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        System.out.println("开始时间：" + df.format(beginTime));
-        System.out.println("结束时间：" + df.format(endTime));
+        logger.info("开始时间：" + df.format(beginTime));
+        logger.info("结束时间：" + df.format(endTime));
 
         lazadaOrderInfoService.syncLazadaOrderInfo(df.format(beginTime), df.format(endTime));
 
         long methodEndTime = System.currentTimeMillis();
-        System.out.println("updateOneWeekLazadaOrderInfo cost time " + (methodEndTime - methodBeginTime) / 1000 + " second");
+        logger.info("updateOneWeekLazadaOrderInfo cost time " + (methodEndTime - methodBeginTime) / 1000 + " second");
     }
 
     /**
@@ -278,7 +279,7 @@ public class LazadaOrderScheduledTasks {
     @Scheduled(cron = "0 30 3 * * SUN")
     @Transactional
     public void updateLastOneWeekLazadaOrderInfo() {
-        System.out.println("-------------> updateLastOneWeekLazadaOrderInfo task begin <-------------");
+        logger.info("-------------> updateLastOneWeekLazadaOrderInfo task begin <-------------");
 
         long methodBeginTime = System.currentTimeMillis();
 
@@ -292,13 +293,13 @@ public class LazadaOrderScheduledTasks {
         long endTime = calendar.getTimeInMillis();
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        System.out.println("开始时间：" + df.format(beginTime));
-        System.out.println("结束时间：" + df.format(endTime));
+        logger.info("开始时间：" + df.format(beginTime));
+        logger.info("结束时间：" + df.format(endTime));
 
         lazadaOrderInfoService.syncLazadaOrderInfo(df.format(beginTime), df.format(endTime));
 
         long methodEndTime = System.currentTimeMillis();
-        System.out.println("updateLastOneWeekLazadaOrderInfo cost time " + (methodEndTime - methodBeginTime) / 1000 + " second");
+        logger.info("updateLastOneWeekLazadaOrderInfo cost time " + (methodEndTime - methodBeginTime) / 1000 + " second");
     }
 
 }

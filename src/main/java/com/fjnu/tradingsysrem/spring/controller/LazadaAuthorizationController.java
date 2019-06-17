@@ -2,6 +2,8 @@ package com.fjnu.tradingsysrem.spring.controller;
 
 import com.fjnu.tradingsysrem.lazada.platform.LazadaApiManager;
 import com.fjnu.tradingsysrem.spring.service.lazada.LazadaAuthorizationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class LazadaAuthorizationController {
+    private static Logger logger = LoggerFactory.getLogger(LazadaAuthorizationController.class);
 
     @Autowired
     private LazadaAuthorizationService authorizationService;
@@ -39,7 +42,7 @@ public class LazadaAuthorizationController {
      */
     @GetMapping("/authorization/receiveCode")
     public ResponseEntity<String> receiveCode(@RequestParam("code") String code) {
-        System.out.println("receiveCode code:" + code);
+        logger.info("receiveCode code:" + code);
         String result = authorizationService.generateAccessToken(code);
         return ResponseEntity.ok().body(result);
     }

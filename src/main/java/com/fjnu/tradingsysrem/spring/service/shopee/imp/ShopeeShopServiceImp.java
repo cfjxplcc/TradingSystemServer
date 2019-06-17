@@ -7,6 +7,8 @@ import com.fjnu.tradingsysrem.shopee.response.shop.GetShopsByPartnerResponse;
 import com.fjnu.tradingsysrem.spring.dao.shopee.ShopeeShopInfoDao;
 import com.fjnu.tradingsysrem.spring.model.shopee.ShopeeShopInfo;
 import com.fjnu.tradingsysrem.spring.service.shopee.ShopeeShopService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,7 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class ShopeeShopServiceImp implements ShopeeShopService {
+    private static Logger logger = LoggerFactory.getLogger(ShopeeShopServiceImp.class);
 
     @Autowired
     private ShopeeShopInfoDao shopeeShopInfoDao;
@@ -82,7 +85,7 @@ public class ShopeeShopServiceImp implements ShopeeShopService {
                     // 数据库中不存在则获取数据
                     if (!isExist) {
                         String result = receiveShopeeAuthorizationShopInfo((int) authedShop.getShopid());
-                        System.out.println(result.replace("店铺授权成功", "店铺(" + authedShop.getShopid() + ")信息添加成功"));
+                        logger.info(result.replace("店铺授权成功", "店铺(" + authedShop.getShopid() + ")信息添加成功"));
                     }
                 }
 

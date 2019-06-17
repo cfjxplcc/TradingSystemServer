@@ -1,6 +1,9 @@
 package com.fjnu.tradingsysrem.spring.service.shopee.tasks;
 
+import com.fjnu.tradingsysrem.spring.service.lazada.imp.LazadaOrderInfoServiceImp;
 import com.fjnu.tradingsysrem.spring.service.shopee.ShopeeShopService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -11,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Component
 public class ShopeeShopScheduledTask {
+    private static Logger logger = LoggerFactory.getLogger(LazadaOrderInfoServiceImp.class);
 
     @Autowired
     private ShopeeShopService shopeeShopService;
@@ -19,9 +23,9 @@ public class ShopeeShopScheduledTask {
 //    @Scheduled(fixedRate = 60 * 60 * 1000)//每间隔1小时执行一次
     @Transactional
     public void asyncAuthorizedShopeeShopInfo() {
-        System.out.println("asyncAuthorizedShopeeShopInfo task begin");
+        logger.info("asyncAuthorizedShopeeShopInfo task begin");
         shopeeShopService.synchShopeeShopInfoFromPlatform();
-        System.out.println("asyncAuthorizedShopeeShopInfo task end");
+        logger.info("asyncAuthorizedShopeeShopInfo task end");
     }
 
 }
